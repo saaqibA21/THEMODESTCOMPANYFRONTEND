@@ -18,33 +18,27 @@
 
 <!-- QUICK VIEW OVERLAY/MODAL -->
 <div class="quick-view" id="quickView" aria-hidden="true" onclick="closeQuickView()">
-
   <div class="quick-view-content"
-     role="dialog"
-     aria-modal="true"
-     aria-label="Quick View"
-     onclick="event.stopPropagation()">
-
+       role="dialog"
+       aria-modal="true"
+       aria-label="Quick View"
+       onclick="event.stopPropagation()">
     <button class="qv-close" onclick="closeQuickView()" aria-label="Close">×</button>
     <div class="qv-body">
       <div class="qv-image-wrap">
         <img id="quickImg" src="" alt="Product image" onclick="toggleImageZoom()" />
-
       </div>
       <div class="qv-details">
         <h3 id="quickTitle"></h3>
         <p class="qv-price" id="quickPrice"></p>
 
         <div class="qv-qty">
-  <button class="qty-btn" onclick="qvQty(-1)">−</button>
-
-  <div class="qty-value">
-    <span id="qvQty">1</span>
-  </div>
-
-  <button class="qty-btn" onclick="qvQty(1)">+</button>
-</div>
-
+          <button class="qty-btn" onclick="qvQty(-1)">−</button>
+          <div class="qty-value">
+            <span id="qvQty">1</span>
+          </div>
+          <button class="qty-btn" onclick="qvQty(1)">+</button>
+        </div>
 
         <div class="qv-actions">
           <button class="primary-btn qv-add" onclick="addToCartFromQuick()">Add to Cart</button>
@@ -69,11 +63,10 @@
 <header class="header">
   <div class="header-left">
     <div class="logo">
-  <button class="menu-btn" aria-label="Open Menu" onclick="toggleMenu()">☰</button>
-  <span class="logo-full">The Modest Company</span>
-  <span class="logo-short">TMC</span>
-</div>
-
+      <button class="menu-btn" aria-label="Open Menu" onclick="toggleMenu()">☰</button>
+      <span class="logo-full">The Modest Company</span>
+      <span class="logo-short">TMC</span>
+    </div>
   </div>
 
   <nav class="nav">
@@ -113,236 +106,233 @@
   </nav>
 </div>
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <h1>Effortless Modesty.<br />Everyday Elegance.</h1>
-    <p>
-      Timeless silhouettes crafted with care, comfort,
-      and confidence — designed for modern modest living.
-    </p>
-    <button class="primary-btn" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
-      Shop Collection
-    </button>
-  </div>
-</section>
-
-<!-- Featured Products -->
-<section class="products" id="featured">
-  <div class="section-head">
-    <h2>Featured Collection</h2>
-    <div class="section-tools">
-      <select class="sort-select" onchange="sortProducts(this.value)" aria-label="Sort products">
-        <option value="featured">Sort: Featured</option>
-        <option value="low">Price: Low to High</option>
-        <option value="high">Price: High to Low</option>
-        <option value="az">Name: A to Z</option>
-      </select>
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Effortless Modesty.<br />Everyday Elegance.</h1>
+      <p>
+        Timeless silhouettes crafted with care, comfort,
+        and confidence — designed for modern modest living.
+      </p>
+      <button class="primary-btn" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">
+        Shop Collection
+      </button>
     </div>
-  </div>
+  </section>
 
-  <div class="grid" id="productGrid">
-    <!-- Static cards stay in HTML as FALLBACK.
-         They will be replaced by Mongo-loaded cards on page load. -->
-    <div class="product-card"
-         data-category="burka"
-         data-name="Linen Abaya"
-         data-id="p1"
-         data-price="3499"
-         data-img="images/display/Linen.png">
-      <div class="product-image">
-        <img src="images/display/Linen.png" alt="Linen Abaya" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Linen Abaya</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
-        </div>
-        <p>₹3,499</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('p1')">Add to Cart</button>
-        </div>
+  <!-- Featured Products -->
+  <section class="products" id="featured">
+    <div class="section-head">
+      <h2>Featured Collection</h2>
+      <div class="section-tools">
+        <select class="sort-select" onchange="sortProducts(this.value)" aria-label="Sort products">
+          <option value="featured">Sort: Featured</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+          <option value="az">Name: A to Z</option>
+        </select>
       </div>
     </div>
 
-    <div class="product-card"
-         data-category="burka"
-         data-name="Everyday Modest Dress"
-         data-id="p2"
-         data-price="2999"
-         data-img="images/display/2.jpg">
-      <div class="product-image">
-        <img src="images/display/2.jpg" alt="Everyday Modest Dress" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+    <div class="grid" id="productGrid">
+      <!-- Static fallback cards -->
+      <div class="product-card"
+           data-category="burka"
+           data-name="Linen Abaya"
+           data-id="p1"
+           data-price="3499"
+           data-img="images/display/Linen.png">
+        <div class="product-image">
+          <img src="images/display/Linen.png" alt="Linen Abaya" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Linen Abaya</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹3,499</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('p1')">Add to Cart</button>
+          </div>
         </div>
       </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Everyday Modest Dress</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+
+      <div class="product-card"
+           data-category="burka"
+           data-name="Everyday Modest Dress"
+           data-id="p2"
+           data-price="2999"
+           data-img="images/display/2.jpg">
+        <div class="product-image">
+          <img src="images/display/2.jpg" alt="Everyday Modest Dress" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
         </div>
-        <p>₹2,999</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('p2')">Add to Cart</button>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Everyday Modest Dress</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹2,999</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('p2')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card"
+           data-category="shawl"
+           data-name="Soft Cotton Co-ord"
+           data-id="p3"
+           data-price="3199"
+           data-img="images/display/3.jpg">
+        <div class="product-image">
+          <img src="images/display/3.jpg" alt="Soft Cotton Co-ord" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Soft Cotton Co-ord</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹3,199</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('p3')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card"
+           data-category="accessories"
+           data-name="Premium Hijab"
+           data-id="p4"
+           data-price="899"
+           data-img="images/display/4.jpg">
+        <div class="product-image">
+          <img src="images/display/4.jpg" alt="Premium Hijab" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Premium Hijab</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹899</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('p4')">Add to Cart</button>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="product-card"
-         data-category="shawl"
-         data-name="Soft Cotton Co-ord"
-         data-id="p3"
-         data-price="3199"
-         data-img="images/display/3.jpg">
-      <div class="product-image">
-        <img src="images/display/3.jpg" alt="Soft Cotton Co-ord" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+  <!-- Special Offer -->
+  <section class="special-offer">
+    <div class="offer-content">
+      <h2>Special Offer</h2>
+      <p>
+        Join MODEST Membership today and enjoy
+        <strong>10% OFF</strong> on your first order.
+      </p>
+      <a href="signup.html" class="primary-btn">Join & Save 10%</a>
+    </div>
+  </section>
+
+  <!-- New Arrivals -->
+  <section class="products new-arrivals" id="new-arrivals">
+    <div class="section-head">
+      <h2>New Arrivals</h2>
+    </div>
+
+    <div class="grid" id="newArrivalsGrid">
+      <!-- Static fallback cards -->
+      <div class="product-card"
+           data-category="burka"
+           data-name="Textured Abaya"
+           data-id="n1"
+           data-price="3799"
+           data-img="images/display/new1.jpg">
+        <div class="product-image">
+          <img src="images/display/new1.jpg" alt="Textured Abaya" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Textured Abaya</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹3,799</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('n1')">Add to Cart</button>
+          </div>
         </div>
       </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Soft Cotton Co-ord</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+
+      <div class="product-card"
+           data-category="shawl"
+           data-name="Everyday Comfort Dress"
+           data-id="n2"
+           data-price="3199"
+           data-img="images/display/new2.jpg">
+        <div class="product-image">
+          <img src="images/display/new2.jpg" alt="Everyday Comfort Dress" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
         </div>
-        <p>₹3,199</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('p3')">Add to Cart</button>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Everyday Comfort Dress</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹3,199</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('n2')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card"
+           data-category="accessories"
+           data-name="Soft Linen Co-ord"
+           data-id="n3"
+           data-price="3499"
+           data-img="images/display/new3.jpg">
+        <div class="product-image">
+          <img src="images/display/new3.jpg" alt="Soft Linen Co-ord" />
+          <div class="product-overlay">
+            <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="pi-top">
+            <h3>Soft Linen Co-ord</h3>
+            <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
+          </div>
+          <p>₹3,499</p>
+          <div class="product-actions">
+            <button class="outline-btn" onclick="addToCart('n3')">Add to Cart</button>
+          </div>
         </div>
       </div>
     </div>
+  </section>
+</main>
 
-    <div class="product-card"
-         data-category="accessories"
-         data-name="Premium Hijab"
-         data-id="p4"
-         data-price="899"
-         data-img="images/display/4.jpg">
-      <div class="product-image">
-        <img src="images/display/4.jpg" alt="Premium Hijab" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Premium Hijab</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
-        </div>
-        <p>₹899</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('p4')">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Special Offer -->
-<section class="special-offer">
-  <div class="offer-content">
-    <h2>Special Offer</h2>
-    <p>
-      Join MODEST Membership today and enjoy
-      <strong>10% OFF</strong> on your first order.
-    </p>
-    <a href="signup.html" class="primary-btn">Join & Save 10%</a>
-  </div>
-</section>
-
-<!-- New Arrivals -->
-<section class="products new-arrivals" id="new-arrivals">
-  <div class="section-head">
-    <h2>New Arrivals</h2>
-  </div>
-
-  <div class="grid" id="newArrivalsGrid">
-    <!-- Static cards stay in HTML as FALLBACK.
-         They will be replaced by Mongo-loaded "new arrival" cards on page load. -->
-    <div class="product-card"
-         data-category="burka"
-         data-name="Textured Abaya"
-         data-id="n1"
-         data-price="3799"
-         data-img="images/display/new1.jpg">
-      <div class="product-image">
-        <img src="images/display/new1.jpg" alt="Textured Abaya" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Textured Abaya</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
-        </div>
-        <p>₹3,799</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('n1')">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card"
-         data-category="shawl"
-         data-name="Everyday Comfort Dress"
-         data-id="n2"
-         data-price="3199"
-         data-img="images/display/new2.jpg">
-      <div class="product-image">
-        <img src="images/display/new2.jpg" alt="Everyday Comfort Dress" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Everyday Comfort Dress</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
-        </div>
-        <p>₹3,199</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('n2')">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card"
-         data-category="accessories"
-         data-name="Soft Linen Co-ord"
-         data-id="n3"
-         data-price="3499"
-         data-img="images/display/new3.jpg">
-      <div class="product-image">
-        <img src="images/display/new3.jpg" alt="Soft Linen Co-ord" />
-        <div class="product-overlay">
-          <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="pi-top">
-          <h3>Soft Linen Co-ord</h3>
-          <button class="wish-btn" onclick="toggleWishlist(this)" aria-label="Add to wishlist">♡</button>
-        </div>
-        <p>₹3,499</p>
-        <div class="product-actions">
-          <button class="outline-btn" onclick="addToCart('n3')">Add to Cart</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
 <!-- Footer -->
 <footer class="footer">
   <div class="footer-top">
-    
     <!-- Brand -->
     <div class="footer-brand">
       <h3 class="footer-logo">MODEST</h3>
@@ -352,28 +342,27 @@
       </p>
 
       <div class="socials">
-  <a href="https://www.instagram.com/the.modestcompany"
-     target="_blank"
-     rel="noopener noreferrer"
-     aria-label="Instagram">
-    <img src="images/social/instagram.png" alt="Instagram" />
-  </a>
+        <a href="https://www.instagram.com/the.modestcompany"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Instagram">
+          <img src="images/social/instagram.png" alt="Instagram" />
+        </a>
 
-  <a href="https://twitter.com/themodestco"
-     target="_blank"
-     rel="noopener noreferrer"
-     aria-label="Twitter">
-    <img src="images/social/twitter.png" alt="Twitter" />
-  </a>
+        <a href="https://twitter.com/themodestco"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Twitter">
+          <img src="images/social/twitter.png" alt="Twitter" />
+        </a>
 
-  <a href="https://www.instagram.com/the.modestcompany"
-     target="_blank"
-     rel="noopener noreferrer"
-     aria-label="Facebook">
-    <img src="images/social/facebook.png" alt="Facebook" />
-  </a>
-</div>
-
+        <a href="https://www.instagram.com/the.modestcompany"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Facebook">
+          <img src="images/social/facebook.png" alt="Facebook" />
+        </a>
+      </div>
     </div>
 
     <!-- Links -->
@@ -404,7 +393,6 @@
         <a href="#">Careers</a>
       </div>
     </div>
-
   </div>
 
   <div class="footer-bottom">
@@ -416,43 +404,26 @@
   </div>
 </footer>
 
-
 <!-- JS -->
 <script>
 /* =========================================================
-  ✅ MONGO PRODUCTS LOADER (ONLY CHANGE FOR "USING MONGO")
-  - Does NOT touch your CSS
-  - Does NOT change your UI structure
-  - Replaces the product cards inside:
-      #productGrid (Featured)
-      #newArrivalsGrid (New Arrivals)
-  - Keeps your existing Quick View / Cart / Wishlist working
+  ✅ MONGO PRODUCTS LOADER
 ========================================================= */
 const API_BASE = "https://themodestcompany.onrender.com";
 
-
 /**
- * Decide which image to show:
- * - If images[] exists, take first
- * - else fallback ""
+ * Decide which image to show
  */
 function firstImg(p) {
   if (!p || !Array.isArray(p.images) || !p.images.length) return "";
-
   const img = p.images[0];
-
-  // Support both old (string) and new (Cloudinary object) formats
   if (typeof img === "string") return img;
   if (typeof img === "object" && img.url) return img.url;
-
   return "";
 }
 
-
 /**
- * Price to display:
- * - Your backend sends "effectivePrice" based on membership logic
- * - fallback to "price"
+ * Price to display
  */
 function effectivePrice(p) {
   const val = (p && (p.effectivePrice ?? p.price));
@@ -461,9 +432,6 @@ function effectivePrice(p) {
 
 /**
  * Convert Mongo Product -> DOM card HTML
- * IMPORTANT:
- * - data-id uses Mongo _id (so cart stores _id)
- * - data-img uses first image URL
  */
 function productCardHtml(p) {
   const img = firstImg(p);
@@ -499,7 +467,7 @@ function productCardHtml(p) {
 }
 
 /**
- * Escape helpers (avoid breaking HTML)
+ * Escape helpers
  */
 function escapeHtml(s) {
   return String(s ?? "")
@@ -515,15 +483,12 @@ function escapeAttr(s) {
 
 /**
  * Load products from Mongo and render
- * Featured = isFeatured true OR fallback to latest
- * New Arrivals = isNewArrival true OR fallback to latest
  */
 async function loadMongoProducts() {
   try {
     const res = await fetch(`${API_BASE}/api/products`);
     const ct = res.headers.get("content-type") || "";
     if (!ct.includes("application/json")) {
-      // If your server returns HTML (like error page), prevent JSON crash
       const txt = await res.text();
       console.error("Non-JSON response from /api/products:", txt.slice(0, 300));
       return;
@@ -532,22 +497,18 @@ async function loadMongoProducts() {
     const products = await res.json();
     if (!Array.isArray(products)) return;
 
-    // Build buckets
     const featured = products.filter(p => p.isFeatured);
     const newArrivals = products.filter(p => p.isNewArrival);
 
-    // Fallback: if no flags, just take some latest items
     const featuredList = featured.length ? featured : products.slice(0, 8);
     const newList = newArrivals.length ? newArrivals : products.slice(0, 6);
 
-    // Render into grids
     const featuredGrid = document.getElementById("productGrid");
     const newGrid = document.getElementById("newArrivalsGrid");
 
     if (featuredGrid) featuredGrid.innerHTML = featuredList.map(productCardHtml).join("");
     if (newGrid) newGrid.innerHTML = newList.map(productCardHtml).join("");
 
-    // Repaint wishlist hearts after new DOM is injected
     paintWishlistHearts();
   } catch (err) {
     console.error("loadMongoProducts error:", err);
@@ -588,24 +549,20 @@ function filterCategory(category) {
       category === "all" || cats.includes(category) ? "flex" : "none";
   });
 
-  // 🔥 SCROLL TO PRODUCTS SECTION
+  // Scroll to products and close menu
   const productsSection = document.getElementById("featured");
   if (productsSection) {
     productsSection.scrollIntoView({ behavior: "smooth" });
   }
-
-  // 🔥 CLOSE MENU AFTER SELECTION
   toggleMenu();
 }
 
-
 /* ---------------------------
-  SEARCH (NAME BASED)
+  SEARCH
 ---------------------------- */
 function searchProducts(query) {
   query = (query || "").toLowerCase().trim();
 
-  // 🔥 AUTO SCROLL TO PRODUCTS WHEN SEARCH STARTS
   if (query.length > 0) {
     const productsSection = document.getElementById("featured");
     if (productsSection) {
@@ -619,9 +576,8 @@ function searchProducts(query) {
   });
 }
 
-
 /* ---------------------------
-  SORT (FEATURED SECTION ONLY)
+  SORT (FEATURED ONLY)
 ---------------------------- */
 function sortProducts(mode) {
   const grid = document.getElementById("productGrid");
@@ -777,8 +733,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* ---------------------------
-  MOBILE-FIRST: basic swipe close
-  (drag right on the menu area)
+  MOBILE SWIPE TO CLOSE MENU
 ---------------------------- */
 let startX = null;
 document.getElementById("sideMenu").addEventListener("touchstart", (e) => {
@@ -789,7 +744,6 @@ document.getElementById("sideMenu").addEventListener("touchmove", (e) => {
   if (startX === null) return;
   const currentX = e.touches[0].clientX;
   const deltaX = currentX - startX;
-  // swipe right to close
   if (deltaX > 70) {
     startX = null;
     const menu = document.getElementById("sideMenu");
@@ -802,8 +756,7 @@ document.getElementById("sideMenu").addEventListener("touchend", () => {
 });
 
 /* ---------------------------
-  ✅ LOAD MONGO PRODUCTS ON PAGE LOAD
-  This is the ONLY behavior change.
+  LOAD MONGO PRODUCTS ON PAGE LOAD
 ---------------------------- */
 loadMongoProducts();
 </script>
