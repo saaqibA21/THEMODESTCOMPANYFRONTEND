@@ -112,7 +112,7 @@
   <div class="logo">Admin Panel</div>
 </header>
 
-<!-- ✅ ADMIN LOGIN OVERLAY (added) -->
+<!-- ✅ ADMIN LOGIN OVERLAY -->
 <div id="adminLoginOverlay" style="
   position:fixed; inset:0; background:#000; z-index:9999;
   display:flex; align-items:center; justify-content:center;">
@@ -131,14 +131,14 @@
   </div>
 </div>
 
-<!-- ✅ ADMIN DASHBOARD WRAP (hidden until login) -->
+<!-- ✅ ADMIN DASHBOARD WRAP -->
 <div class="admin-wrap" id="adminWrap" style="display:none;">
   <div class="admin-head">
     <h1>The Modest Company — Admin</h1>
     <a href="index.html" class="outline-btn">← Back to Store</a>
   </div>
 
-  <!-- ✅ ANALYTICS PANEL (added) -->
+  <!-- ✅ ANALYTICS PANEL -->
   <div class="panel">
     <div class="row" style="justify-content:space-between; margin-top:0;">
       <h2 style="color:var(--gold); font-family:'Playfair Display',serif;">
@@ -171,7 +171,7 @@
     </div>
   </div>
 
-  <!-- ✅ YOUR EXISTING ADD PRODUCT PANEL (unchanged layout, admin key input kept but not required anymore) -->
+  <!-- ✅ ADD PRODUCT PANEL -->
   <div class="panel">
     <h2 style="color:var(--gold); margin-bottom:12px; font-family:'Playfair Display',serif;">Add Product</h2>
 
@@ -202,18 +202,23 @@
 
       <div class="full">
         <label>Images (auto upload)</label>
+
         <!-- File picker -->
-          <input type="file" id="imageUpload" multiple accept="image/*" />
-          <!-- Preview thumbnails -->
-           <div id="uploadPreview" class="row" style="margin-top:10px;"></div>
-           <!-- Auto-filled URLs -->
-            <input
-            id="images"
-            type="text"
-            placeholder="Image URLs will appear here automatically"
-            readonly
-            style="margin-top:10px;"
-            />
+        <input type="file" id="imageUpload" multiple accept="image/*" />
+
+        <!-- Preview thumbnails -->
+        <div id="uploadPreview" class="row" style="margin-top:10px;"></div>
+
+        <!-- Stores JSON string of images [{url, publicId, order}] -->
+        <input
+          id="images"
+          type="text"
+          placeholder="Image data will appear here automatically"
+          readonly
+          style="margin-top:10px;"
+        />
+
+        <div class="tag" id="uploadStatus" style="margin-top:10px;">Upload: Ready</div>
       </div>
 
       <div class="full">
@@ -251,7 +256,7 @@
     </div>
   </div>
 
-  <!-- ✅ YOUR EXISTING PRODUCTS PANEL (unchanged) -->
+  <!-- ✅ PRODUCTS PANEL -->
   <div class="panel">
     <div class="row" style="justify-content:space-between; margin-top:0;">
       <h2 style="color:var(--gold); font-family:'Playfair Display',serif;">All Products</h2>
@@ -281,12 +286,11 @@
    FULL ADMIN LOGIC (inline) — includes:
    ✅ Login gate (admin key first)
    ✅ Analytics loader
-   ✅ Keeps your image upload UI
+   ✅ Cloudinary upload → backend /api/admin/upload
    ✅ Product CRUD (matches your backend routes)
 ===================================================== */
 
 const API_BASE = "https://themodestcompany.onrender.com";
-
 
 /* ---------------------------
   ADMIN SESSION KEY
@@ -315,7 +319,6 @@ async function adminLogin() {
   }
 
   try {
-    // Verify key by hitting a protected endpoint
     const res = await fetch(`${API_BASE}/api/admin/products`, {
       headers: { "x-admin-key": key }
     });
@@ -329,14 +332,13 @@ async function adminLogin() {
     document.getElementById("adminLoginOverlay").style.display = "none";
     document.getElementById("adminWrap").style.display = "block";
 
-    // Optional: keep your input field synced (but you don't need to type it)
     const adminKeyInput = document.getElementById("adminKey");
     if (adminKeyInput) adminKeyInput.value = key;
 
     await loadAnalytics();
     await loadProducts();
   } catch (e) {
-    err.innerText = "Server not reachable. Is backend running on :5000?";
+    err.innerText = "Server not reachable. Check Render backend.";
   }
 }
 
@@ -371,49 +373,73 @@ function adminLogout() {
     await loadAnalytics();
     await loadProducts();
   } catch {
-    // If backend down, keep login overlay visible
+    // keep overlay
   }
 })();
 
 /* ---------------------------
-  IMAGE UPLOAD (placeholder)
-  NOTE: This requires backend upload endpoint.
-  If you already have it in admin.js, keep yours.
-  This code is safe: it only fills preview + optional URLs.
+  IMAGE UPLOAD → CLOUDINARY
+  Calls: POST /api/admin/upload
+  Fills #images with JSON string: [{url, publicId, order}]
 ---------------------------- */
 const imageUploadEl = document.getElementById("imageUpload");
 if (imageUploadEl) {
   imageUploadEl.addEventListener("change", async () => {
     const files = Array.from(imageUploadEl.files || []);
     const preview = document.getElementById("uploadPreview");
-    const urlsField = document.getElementById("images");
-    if (preview) preview.innerHTML = "";
-    if (urlsField) urlsField.value = "";
+    const imagesField = document.getElementById("images");
+    const uploadStatus = document.getElementById("uploadStatus");
+
+    if (!files.length) return;
+
+    preview.innerHTML = "";
+    imagesField.value = "";
 
     // Preview thumbnails immediately
     files.forEach(file => {
       const img = document.createElement("img");
       img.className = "miniimg";
       img.src = URL.createObjectURL(file);
-      if (preview) preview.appendChild(img);
+      preview.appendChild(img);
     });
 
-    // ⚠️ If you have an upload endpoint, replace this section.
-    // For now, we keep it non-breaking and don't remove anything.
-    // Example expected endpoint: POST /api/admin/upload -> returns { urls: [] }
-    // If you already implemented upload in admin.js earlier, delete this block and keep yours.
+    // Upload to backend
+    const fd = new FormData();
+    files.forEach(f => fd.append("images", f));
+    fd.append("category", document.getElementById("category").value);
+
+    try {
+      if (uploadStatus) uploadStatus.innerText = "Upload: Uploading...";
+
+      const res = await fetch(`${API_BASE}/api/admin/upload`, {
+        method: "POST",
+        headers: {
+          "x-admin-key": getAdminKey()
+        },
+        body: fd
+      });
+
+      if (!res.ok) {
+        if (uploadStatus) uploadStatus.innerText = "Upload: Failed";
+        alert("Image upload failed (check admin key / backend)");
+        return;
+      }
+
+      const data = await res.json();
+
+      // Store image objects as JSON string (backend expects this structure)
+      imagesField.value = JSON.stringify(data.images || []);
+
+      if (uploadStatus) uploadStatus.innerText = `Upload: Done (${(data.images || []).length} images) ✅`;
+    } catch (e) {
+      if (uploadStatus) uploadStatus.innerText = "Upload: Error";
+      alert("Upload error (server down?)");
+    }
   });
 }
 
 /* ---------------------------
-  ANALYTICS (added)
-  Requires backend: GET /api/admin/analytics?range=today|week|month
-  Response expected:
-  {
-    totalOrders: number,
-    totalRevenue: number,
-    topProducts: [{ title: string, qty: number }]
-  }
+  ANALYTICS
 ---------------------------- */
 async function loadAnalytics() {
   const statusEl = document.getElementById("analyticsStatus");
@@ -427,7 +453,7 @@ async function loadAnalytics() {
     });
 
     if (!res.ok) {
-      if (statusEl) statusEl.innerText = "Analytics: Failed (endpoint missing?)";
+      if (statusEl) statusEl.innerText = "Analytics: Failed";
       return;
     }
 
@@ -446,7 +472,7 @@ async function loadAnalytics() {
 
     if (statusEl) statusEl.innerText = "Analytics: Loaded";
   } catch (e) {
-    if (statusEl) statusEl.innerText = "Analytics: Error (server down?)";
+    if (statusEl) statusEl.innerText = "Analytics: Error";
   }
 }
 
@@ -477,7 +503,7 @@ async function loadProducts() {
 
     tbody.innerHTML = "";
     products.forEach(p => {
-      const imgUrl = (p.images && p.images[0]) ? p.images[0] : "";
+      const imgUrl = (p.images && p.images[0] && p.images[0].url) ? p.images[0].url : "";
       const launch = p.releaseAt ? new Date(p.releaseAt).toLocaleString() : "-";
       const delay = p.normalReleaseAt && p.releaseAt
         ? Math.round((new Date(p.normalReleaseAt) - new Date(p.releaseAt)) / 86400000)
@@ -502,14 +528,13 @@ async function loadProducts() {
       tbody.appendChild(tr);
     });
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="8">Error loading products (is backend running?)</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8">Error loading products</td></tr>`;
   }
 }
 
 /* ---------------------------
   PRODUCTS: ADD
-  Uses your backend: POST /api/admin/products
-  Headers: x-admin-key
+  Uses backend: POST /api/admin/products
 ---------------------------- */
 async function addProduct() {
   const status = document.getElementById("status");
@@ -521,7 +546,6 @@ async function addProduct() {
     return;
   }
 
-  // keep session in sync if user typed
   if (!getAdminKey() && key) setAdminKey(key);
 
   const title = (document.getElementById("title").value || "").trim();
@@ -550,12 +574,17 @@ async function addProduct() {
     isNewArrival
   };
 
-  // images: allow comma-separated URLs in field (since upload endpoint not included here)
+  // ✅ images stored as JSON string [{url, publicId, order}]
   if (imagesText) {
-    body.images = imagesText.split(",").map(s => s.trim()).filter(Boolean);
+    try {
+      body.images = JSON.parse(imagesText);
+    } catch {
+      body.images = [];
+    }
+  } else {
+    body.images = [];
   }
 
-  // early access logic for your backend
   if (launchDateVal) body.launchDate = new Date(launchDateVal).toISOString();
   if (!isNaN(earlyDays) && earlyDays > 0) body.earlyAccessDaysForNormal = earlyDays;
 
@@ -577,6 +606,23 @@ async function addProduct() {
     }
 
     if (status) status.innerText = "Status: Product added ✅";
+
+    // ✅ Clear form after success
+    document.getElementById("title").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("launchDate").value = "";
+    document.getElementById("earlyDays").value = "3";
+    document.getElementById("isFeatured").checked = false;
+    document.getElementById("isNewArrival").checked = false;
+
+    document.getElementById("imageUpload").value = "";
+    document.getElementById("uploadPreview").innerHTML = "";
+    document.getElementById("images").value = "";
+    const uploadStatus = document.getElementById("uploadStatus");
+    if (uploadStatus) uploadStatus.innerText = "Upload: Ready";
+
     await loadProducts();
   } catch (e) {
     if (status) status.innerText = "Status: Error (server down?)";
