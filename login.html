@@ -145,7 +145,6 @@
   <script>
     const API_BASE = "https://themodestcompany.onrender.com";
 
-
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("errorMsg");
 
@@ -173,8 +172,8 @@
           return;
         }
 
-        // Save JWT
-        localStorage.setItem("modest_token", data.token);
+        // ✅ SAVE JWT (STANDARD KEY)
+        localStorage.setItem("auth_token", data.token);
 
         // Redirect
         window.location.href = "index.html";
