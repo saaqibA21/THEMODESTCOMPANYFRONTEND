@@ -642,90 +642,134 @@ body {
 }
 
 
-/* ==============================
-   QUICK VIEW – GLOBAL FIX
-================================ */
+/* =================================
+   QUICK VIEW – PREMIUM REDESIGN
+================================= */
 
 .quick-view {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.65);
   z-index: 9999;
   display: none;
   align-items: center;
   justify-content: center;
 }
 
+/* Desktop modal */
 .quick-view-content {
   background: #fff;
-  width: 90%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 14px;
+  width: 92%;
+  max-width: 460px;
+  max-height: 92vh;
+  border-radius: 18px;
+  overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Close button – ALWAYS visible */
+/* Close button */
 .qv-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10000;
-  background: #fff;
-  border: none;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 6px 10px;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: none;
+  background: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+/* Image */
+.qv-image-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
 
-/* ==============================
-   QUICK VIEW – MOBILE
-================================ */
+.qv-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Details */
+.qv-details {
+  padding: 16px;
+}
+
+.qv-details h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.qv-price {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+/* Quantity */
+.qv-qty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.qty-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 18px;
+}
+
+/* Actions */
+.qv-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.qv-actions button {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* Tip */
+.qv-note {
+  font-size: 12px;
+  color: #777;
+  margin-top: 12px;
+}
+
+/* ==========================
+   MOBILE – BOTTOM SHEET
+========================== */
 @media (max-width: 768px) {
 
-  .qv-body {
-    display: flex;
-    flex-direction: column;
+  .quick-view {
+    align-items: flex-end;
   }
 
-  .qv-image-wrap {
+  .quick-view-content {
     width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
+    max-width: none;
+    height: 92vh;
+    border-radius: 18px 18px 0 0;
+    animation: slideUp 0.25s ease;
   }
 
-  .qv-image-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .qv-details {
-    padding: 14px;
-  }
-
-  .qv-details h3 {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .qv-price {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  .qv-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .qv-actions button {
-    flex: 1;
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
   }
 }
-
