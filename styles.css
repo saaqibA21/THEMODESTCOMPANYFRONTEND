@@ -299,7 +299,7 @@ body {
 ========================= */
 .special-offer {
   position: relative;
-  background-image: url("images/banners/special-offer.jpg"); /* 👈 change path */
+  background-image: url("images/DISCOUNT10MOD.png"); /* 👈 change path */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
