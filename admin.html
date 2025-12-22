@@ -1,268 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | The Modest Company</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin | The Modest Company</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
-  <style>
-    .admin-wrap{
-      max-width: 1100px;
-      margin: 60px auto;
-      padding: 0 24px;
-    }
-    .admin-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom: 24px;
-    }
-    .admin-head h1{
-      font-family:'Playfair Display',serif;
-      color:var(--gold);
-    }
-    .panel{
-      border:1px solid var(--border);
-      background:var(--soft-black);
-      padding: 22px;
-      margin-bottom: 26px;
-    }
-    .form-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .form-grid label{
-      font-size: 13px;
-      color: var(--muted);
-      display:block;
-      margin-bottom: 6px;
-    }
-    .form-grid input, .form-grid textarea, .form-grid select{
-      width:100%;
-      padding: 12px;
-      border:1px solid var(--border);
-      background:#000;
-      color:#fff;
-      outline:none;
-    }
-    textarea{ min-height: 90px; resize: vertical; }
-    .full{ grid-column:1/-1; }
-    .row{
-      display:flex;
-      gap: 12px;
-      align-items:center;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-    .tag{
-      border:1px solid var(--border);
-      padding: 8px 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .table{
-      width:100%;
-      border-collapse: collapse;
-      margin-top: 14px;
-    }
-    .table th,.table td{
-      border-bottom:1px solid var(--border);
-      text-align:left;
-      padding: 12px 8px;
-      font-size: 13px;
-      color: var(--muted);
-      vertical-align: top;
-    }
-    .table th{ color: var(--gold); font-weight: 500; }
-    .title-cell{ color: #fff; font-size: 14px; }
-    .miniimg{
-      width: 48px; height: 60px; object-fit: cover;
-      border:1px solid var(--border);
-    }
-    .danger{
-      background: transparent;
-      border:1px solid #5a1a1a;
-      color:#ffb3b3;
-      padding: 10px 12px;
-      cursor:pointer;
-    }
-    .danger:hover{ border-color:#ffb3b3; }
-    @media(max-width:900px){
-      .form-grid{ grid-template-columns: 1fr; }
-    }
-
-    /* --- Minimal login overlay styling (added) --- */
-    #adminLoginOverlay input{
-      width:100%;
-      padding:12px;
-      border:1px solid var(--border);
-      background:#000;
-      color:#fff;
-      outline:none;
-    }
-  </style>
+<style>
+:root{
+  --gold:#d4af37;
+  --border:#222;
+  --muted:#aaa;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#000;color:#fff;font-family:Inter,sans-serif
+}
+header{
+  padding:18px 24px;border-bottom:1px solid var(--border)
+}
+.logo{
+  font-family:'Playfair Display',serif;color:var(--gold);font-size:20px
+}
+.admin-wrap{
+  max-width:1100px;margin:40px auto;padding:0 24px
+}
+.panel{
+  border:1px solid var(--border);
+  padding:22px;
+  margin-bottom:26px;
+  background:#050505
+}
+h2{
+  font-family:'Playfair Display',serif;
+  color:var(--gold);
+  margin:0 0 14px
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+.full{grid-column:1/-1}
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  background:#000;
+  color:#fff;
+  border:1px solid var(--border)
+}
+textarea{min-height:90px;resize:vertical}
+button{
+  padding:12px 18px;
+  background:#000;
+  color:#fff;
+  border:1px solid #444;
+  cursor:pointer
+}
+button:hover{border-color:var(--gold)}
+.row{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-top:14px;
+  flex-wrap:wrap
+}
+.tag{
+  border:1px solid var(--border);
+  padding:8px 10px;
+  font-size:12px;
+  color:var(--muted)
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:14px
+}
+.table th,.table td{
+  border-bottom:1px solid var(--border);
+  padding:10px;
+  font-size:13px;
+  text-align:left
+}
+.table th{color:var(--gold)}
+.miniimg{
+  width:48px;
+  height:60px;
+  object-fit:cover;
+  border:1px solid var(--border)
+}
+.danger{
+  border-color:#5a1a1a;
+  color:#ffb3b3
+}
+#loginOverlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999
+}
+@media(max-width:900px){
+  .form-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
+
 <body>
 
-<header class="header">
-  <div class="logo">Admin Panel</div>
+<header>
+  <div class="logo">The Modest Company — Admin</div>
 </header>
 
-<!-- ✅ ADMIN LOGIN OVERLAY -->
-<div id="adminLoginOverlay" style="
-  position:fixed; inset:0; background:#000; z-index:9999;
-  display:flex; align-items:center; justify-content:center;">
-  <div style="border:1px solid var(--border); padding:32px; background:#0a0a0a; width:360px;">
-    <h2 style="font-family:'Playfair Display',serif; color:var(--gold); margin-bottom:14px;">
-      Admin Login
-    </h2>
-    <input id="adminLoginKey" type="password" placeholder="Enter Admin Key" />
-    <button class="primary-btn" style="margin-top:14px; width:100%;" onclick="adminLogin()">
-      Enter Dashboard
-    </button>
-    <div id="loginError" style="color:#ffb3b3; font-size:13px; margin-top:10px;"></div>
-    <div style="color:var(--muted); font-size:12px; margin-top:10px;">
-      Tip: Key is stored for this session only.
-    </div>
+<!-- ================= LOGIN OVERLAY ================= -->
+<div id="loginOverlay">
+  <div class="panel" style="width:360px">
+    <h2>Admin Login</h2>
+    <input id="adminKeyInput" type="password" placeholder="Enter Admin Key">
+    <button style="margin-top:12px;width:100%" onclick="login()">Enter Dashboard</button>
+    <div id="loginError" style="color:#ffb3b3;font-size:13px;margin-top:8px"></div>
   </div>
 </div>
 
-<!-- ✅ ADMIN DASHBOARD WRAP -->
-<div class="admin-wrap" id="adminWrap" style="display:none;">
-  <div class="admin-head">
-    <h1>The Modest Company — Admin</h1>
-    <a href="index.html" class="outline-btn">← Back to Store</a>
-  </div>
+<!-- ================= DASHBOARD ================= -->
+<div class="admin-wrap" id="dashboard" style="display:none">
 
-  <!-- ✅ ANALYTICS PANEL -->
+  <!-- ANALYTICS -->
   <div class="panel">
-    <div class="row" style="justify-content:space-between; margin-top:0;">
-      <h2 style="color:var(--gold); font-family:'Playfair Display',serif;">
-        Sales Analytics
-      </h2>
-
-      <select id="analyticsRange" onchange="loadAnalytics()" style="padding:10px 12px; border:1px solid var(--border); background:#000; color:#fff;">
+    <div class="row" style="justify-content:space-between;margin-top:0">
+      <h2>Sales Analytics</h2>
+      <select id="range" onchange="loadAnalytics()">
         <option value="today">Today</option>
         <option value="week">This Week</option>
         <option value="month">This Month</option>
       </select>
     </div>
-
-    <div class="row" style="margin-top:18px;">
-      <div class="tag">Orders: <strong id="statOrders">0</strong></div>
-      <div class="tag">Revenue: ₹<strong id="statRevenue">0</strong></div>
-    </div>
-
-    <div style="margin-top:18px;">
-      <h3 style="font-size:14px; color:var(--gold); margin-bottom:8px;">
-        Top Products
-      </h3>
-      <ul id="topProducts" style="font-size:13px; color:var(--muted); margin:0; padding-left:18px;"></ul>
-    </div>
-
     <div class="row">
-      <button class="outline-btn" onclick="loadAnalytics()">Refresh Analytics</button>
-      <span class="tag" id="analyticsStatus">Analytics: Ready</span>
-      <button class="danger" onclick="adminLogout()" style="margin-left:auto;">Logout</button>
+      <div class="tag">Orders: <b id="statOrders">0</b></div>
+      <div class="tag">Revenue: ₹<b id="statRevenue">0</b></div>
+      <div class="tag">Top Product: <b id="statTop">—</b></div>
     </div>
   </div>
 
-  <!-- ✅ ADD PRODUCT PANEL -->
+  <!-- ADD PRODUCT -->
   <div class="panel">
-    <h2 style="color:var(--gold); margin-bottom:12px; font-family:'Playfair Display',serif;">Add Product</h2>
+    <h2>Add Product</h2>
 
     <div class="form-grid">
-      <div>
-        <label>Admin Key (required)</label>
-        <input id="adminKey" type="password" placeholder="Enter your ADMIN_KEY" />
-      </div>
+      <input id="title" placeholder="Product title">
+      <input id="price" type="number" placeholder="Price">
 
-      <div>
-        <label>Title</label>
-        <input id="title" type="text" placeholder="Linen Abaya" />
-      </div>
+      <select id="category">
+        <option value="burka">Burka</option>
+        <option value="shawl">Shawl</option>
+        <option value="accessories">Accessories</option>
+      </select>
 
-      <div>
-        <label>Price (₹)</label>
-        <input id="price" type="number" placeholder="3499" />
-      </div>
+      <input id="stock" type="number" placeholder="Stock">
 
-      <div>
-        <label>Category</label>
-        <select id="category">
-          <option value="burka">Burka</option>
-          <option value="shawl">Shawl</option>
-          <option value="accessories">Accessories</option>
-        </select>
+      <div class="full">
+        <label style="font-size:13px;color:var(--muted)">Images</label>
+        <input id="imageUpload" type="file" multiple accept="image/*">
+        <div class="row" id="preview"></div>
       </div>
 
       <div class="full">
-        <label>Images (auto upload)</label>
-
-        <!-- File picker -->
-        <input type="file" id="imageUpload" multiple accept="image/*" />
-
-        <!-- Preview thumbnails -->
-        <div id="uploadPreview" class="row" style="margin-top:10px;"></div>
-
-        <!-- Stores JSON string of images [{url, publicId, order}] -->
-        <input
-          id="images"
-          type="text"
-          placeholder="Image data will appear here automatically"
-          readonly
-          style="margin-top:10px;"
-        />
-
-        <div class="tag" id="uploadStatus" style="margin-top:10px;">Upload: Ready</div>
-      </div>
-
-      <div class="full">
-        <label>Description</label>
-        <textarea id="description" placeholder="Fabric details, fit, wash care..."></textarea>
-      </div>
-
-      <div>
-        <label>Stock</label>
-        <input id="stock" type="number" placeholder="10" />
-      </div>
-
-      <div>
-        <label>Launch Date (Plus access from this date)</label>
-        <input id="launchDate" type="datetime-local" />
-      </div>
-
-      <div>
-        <label>Normal user delay days</label>
-        <input id="earlyDays" type="number" value="3" />
-      </div>
-
-      <div>
-        <label>Flags</label>
-        <div class="row">
-          <label class="tag"><input id="isFeatured" type="checkbox" /> Featured</label>
-          <label class="tag"><input id="isNewArrival" type="checkbox" /> New Arrival</label>
-        </div>
+        <textarea id="description" placeholder="Description"></textarea>
       </div>
     </div>
 
     <div class="row">
-      <button class="primary-btn" onclick="addProduct()">Add Product</button>
-      <span id="status" class="tag">Status: Ready</span>
+      <button onclick="addProduct()">Add Product</button>
+      <span class="tag" id="status">Ready</span>
     </div>
   </div>
 
-  <!-- ✅ PRODUCTS PANEL -->
+  <!-- PRODUCTS -->
   <div class="panel">
-    <div class="row" style="justify-content:space-between; margin-top:0;">
-      <h2 style="color:var(--gold); font-family:'Playfair Display',serif;">All Products</h2>
-      <button class="outline-btn" onclick="loadProducts()">Refresh</button>
-    </div>
-
+    <h2>All Products</h2>
     <table class="table">
       <thead>
         <tr>
@@ -270,386 +188,182 @@
           <th>Title</th>
           <th>Category</th>
           <th>Price</th>
-          <th>Launch</th>
-          <th>Normal Delay</th>
-          <th>Flags</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody id="productRows"></tbody>
     </table>
   </div>
+
 </div>
 
 <script>
 /* =====================================================
-   FULL ADMIN LOGIC (inline) — includes:
-   ✅ Login gate (admin key first)
-   ✅ Analytics loader
-   ✅ Cloudinary upload → backend /api/admin/upload
-   ✅ Product CRUD (matches your backend routes)
+   CONFIG
 ===================================================== */
+const API = "https://themodestcompany.onrender.com";
+let uploadedImages = [];
 
-const API_BASE = "https://themodestcompany.onrender.com";
+/* =====================================================
+   ADMIN KEY HELPERS
+===================================================== */
+function getKey(){ return sessionStorage.getItem("ADMIN_KEY"); }
+function setKey(k){ sessionStorage.setItem("ADMIN_KEY",k); }
+function clearKey(){ sessionStorage.removeItem("ADMIN_KEY"); }
 
-/* ---------------------------
-  ADMIN SESSION KEY
----------------------------- */
-function getAdminKey() {
-  return sessionStorage.getItem("ADMIN_KEY") || "";
-}
-function setAdminKey(k) {
-  sessionStorage.setItem("ADMIN_KEY", k);
-}
-function clearAdminKey() {
-  sessionStorage.removeItem("ADMIN_KEY");
-}
+/* =====================================================
+   LOGIN
+===================================================== */
+async function login(){
+  const key = adminKeyInput.value.trim();
+  if(!key) return;
 
-/* ---------------------------
-  LOGIN / LOGOUT
----------------------------- */
-async function adminLogin() {
-  const key = (document.getElementById("adminLoginKey").value || "").trim();
-  const err = document.getElementById("loginError");
-  err.innerText = "";
+  const res = await fetch(`${API}/api/admin/products`,{
+    headers:{ "x-admin-key": key }
+  });
 
-  if (!key) {
-    err.innerText = "Please enter admin key";
+  if(!res.ok){
+    loginError.innerText = "Invalid admin key";
     return;
   }
 
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/products`, {
-      headers: { "x-admin-key": key }
-    });
+  setKey(key);
+  loginOverlay.style.display="none";
+  dashboard.style.display="block";
+  loadAnalytics();
+  loadProducts();
+}
 
-    if (!res.ok) {
-      err.innerText = "Invalid admin key";
-      return;
-    }
+/* AUTO LOGIN */
+if(getKey()){
+  loginOverlay.style.display="none";
+  dashboard.style.display="block";
+  loadAnalytics();
+  loadProducts();
+}
 
-    setAdminKey(key);
-    document.getElementById("adminLoginOverlay").style.display = "none";
-    document.getElementById("adminWrap").style.display = "block";
+/* =====================================================
+   IMAGE UPLOAD → /api/admin/upload
+===================================================== */
+imageUpload.addEventListener("change", async ()=>{
+  uploadedImages=[];
+  preview.innerHTML="";
 
-    const adminKeyInput = document.getElementById("adminKey");
-    if (adminKeyInput) adminKeyInput.value = key;
+  const fd=new FormData();
+  [...imageUpload.files].forEach(f=>fd.append("images",f));
+  fd.append("category",category.value);
 
-    await loadAnalytics();
-    await loadProducts();
-  } catch (e) {
-    err.innerText = "Server not reachable. Check Render backend.";
+  const res=await fetch(`${API}/api/admin/upload`,{
+    method:"POST",
+    headers:{ "x-admin-key": getKey() },
+    body:fd
+  });
+
+  if(!res.ok){
+    alert("Image upload failed");
+    return;
+  }
+
+  const data=await res.json();
+  uploadedImages=data.images||[];
+
+  uploadedImages.forEach(i=>{
+    const img=document.createElement("img");
+    img.src=i.url;
+    img.className="miniimg";
+    preview.appendChild(img);
+  });
+});
+
+/* =====================================================
+   ADD PRODUCT
+===================================================== */
+async function addProduct(){
+  status.innerText="Saving...";
+
+  const body={
+    title:title.value.trim(),
+    price:Number(price.value),
+    category:category.value,
+    stock:Number(stock.value),
+    description:description.value.trim(),
+    images:uploadedImages
+  };
+
+  const res=await fetch(`${API}/api/admin/products`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "x-admin-key":getKey()
+    },
+    body:JSON.stringify(body)
+  });
+
+  status.innerText=res.ok?"Added ✅":"Error";
+  if(res.ok){
+    title.value="";
+    price.value="";
+    stock.value="";
+    description.value="";
+    imageUpload.value="";
+    preview.innerHTML="";
+    uploadedImages=[];
+    loadProducts();
   }
 }
 
-function adminLogout() {
-  clearAdminKey();
-  document.getElementById("adminWrap").style.display = "none";
-  document.getElementById("adminLoginOverlay").style.display = "flex";
-  document.getElementById("adminLoginKey").value = "";
-  document.getElementById("loginError").innerText = "";
-}
+/* =====================================================
+   LOAD PRODUCTS
+===================================================== */
+async function loadProducts(){
+  const res=await fetch(`${API}/api/admin/products`,{
+    headers:{ "x-admin-key":getKey() }
+  });
 
-(async function autoLogin() {
-  const key = getAdminKey();
-  if (!key) return;
+  const products=await res.json();
+  productRows.innerHTML="";
 
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/products`, {
-      headers: { "x-admin-key": key }
-    });
-
-    if (!res.ok) {
-      clearAdminKey();
-      return;
-    }
-
-    document.getElementById("adminLoginOverlay").style.display = "none";
-    document.getElementById("adminWrap").style.display = "block";
-
-    const adminKeyInput = document.getElementById("adminKey");
-    if (adminKeyInput) adminKeyInput.value = key;
-
-    await loadAnalytics();
-    await loadProducts();
-  } catch {
-    // keep overlay
-  }
-})();
-
-/* ---------------------------
-  IMAGE UPLOAD → CLOUDINARY
-  Calls: POST /api/admin/upload
-  Fills #images with JSON string: [{url, publicId, order}]
----------------------------- */
-const imageUploadEl = document.getElementById("imageUpload");
-if (imageUploadEl) {
-  imageUploadEl.addEventListener("change", async () => {
-    const files = Array.from(imageUploadEl.files || []);
-    const preview = document.getElementById("uploadPreview");
-    const imagesField = document.getElementById("images");
-    const uploadStatus = document.getElementById("uploadStatus");
-
-    if (!files.length) return;
-
-    preview.innerHTML = "";
-    imagesField.value = "";
-
-    // Preview thumbnails immediately
-    files.forEach(file => {
-      const img = document.createElement("img");
-      img.className = "miniimg";
-      img.src = URL.createObjectURL(file);
-      preview.appendChild(img);
-    });
-
-    // Upload to backend
-    const fd = new FormData();
-    files.forEach(f => fd.append("images", f));
-    fd.append("category", document.getElementById("category").value);
-
-    try {
-      if (uploadStatus) uploadStatus.innerText = "Upload: Uploading...";
-
-      const res = await fetch(`${API_BASE}/api/admin/upload`, {
-        method: "POST",
-        headers: {
-          "x-admin-key": getAdminKey()
-        },
-        body: fd
-      });
-
-      if (!res.ok) {
-        if (uploadStatus) uploadStatus.innerText = "Upload: Failed";
-        alert("Image upload failed (check admin key / backend)");
-        return;
-      }
-
-      const data = await res.json();
-
-      // Store image objects as JSON string (backend expects this structure)
-      imagesField.value = JSON.stringify(data.images || []);
-
-      if (uploadStatus) uploadStatus.innerText = `Upload: Done (${(data.images || []).length} images) ✅`;
-    } catch (e) {
-      if (uploadStatus) uploadStatus.innerText = "Upload: Error";
-      alert("Upload error (server down?)");
-    }
+  products.forEach(p=>{
+    productRows.innerHTML+=`
+      <tr>
+        <td>${p.images?.[0]?`<img class="miniimg" src="${p.images[0].url}">`:"—"}</td>
+        <td>${p.title}</td>
+        <td>${p.category}</td>
+        <td>₹${p.price}</td>
+        <td>
+          <button class="danger" onclick="deleteProduct('${p._id}')">Delete</button>
+        </td>
+      </tr>
+    `;
   });
 }
 
-/* ---------------------------
-  ANALYTICS
----------------------------- */
-async function loadAnalytics() {
-  const statusEl = document.getElementById("analyticsStatus");
-  const range = document.getElementById("analyticsRange")?.value || "today";
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
+async function deleteProduct(id){
+  if(!confirm("Delete product?")) return;
 
-  try {
-    if (statusEl) statusEl.innerText = "Analytics: Loading...";
+  await fetch(`${API}/api/admin/products/${id}`,{
+    method:"DELETE",
+    headers:{ "x-admin-key":getKey() }
+  });
 
-    const res = await fetch(`${API_BASE}/api/admin/analytics?range=${encodeURIComponent(range)}`, {
-      headers: { "x-admin-key": getAdminKey() }
-    });
-
-    if (!res.ok) {
-      if (statusEl) statusEl.innerText = "Analytics: Failed";
-      return;
-    }
-
-    const d = await res.json();
-
-    document.getElementById("statOrders").innerText = d.totalOrders ?? 0;
-    document.getElementById("statRevenue").innerText = (d.totalRevenue ?? 0).toLocaleString("en-IN");
-
-    const ul = document.getElementById("topProducts");
-    ul.innerHTML = "";
-    (d.topProducts || []).forEach(p => {
-      const li = document.createElement("li");
-      li.innerText = `${p.title} — ${p.qty} sold`;
-      ul.appendChild(li);
-    });
-
-    if (statusEl) statusEl.innerText = "Analytics: Loaded";
-  } catch (e) {
-    if (statusEl) statusEl.innerText = "Analytics: Error";
-  }
+  loadProducts();
 }
 
-/* ---------------------------
-  PRODUCTS: LOAD
----------------------------- */
-async function loadProducts() {
-  const tbody = document.getElementById("productRows");
-  if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="8">Loading...</td></tr>`;
+/* =====================================================
+   ANALYTICS
+===================================================== */
+async function loadAnalytics(){
+  const res=await fetch(`${API}/api/admin/analytics?range=${range.value}`,{
+    headers:{ "x-admin-key":getKey() }
+  });
 
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/products`, {
-      headers: { "x-admin-key": getAdminKey() }
-    });
-
-    if (!res.ok) {
-      tbody.innerHTML = `<tr><td colspan="8">Unauthorized or server error</td></tr>`;
-      return;
-    }
-
-    const products = await res.json();
-
-    if (!products.length) {
-      tbody.innerHTML = `<tr><td colspan="8">No products found</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = "";
-    products.forEach(p => {
-      const imgUrl = (p.images && p.images[0] && p.images[0].url) ? p.images[0].url : "";
-      const launch = p.releaseAt ? new Date(p.releaseAt).toLocaleString() : "-";
-      const delay = p.normalReleaseAt && p.releaseAt
-        ? Math.round((new Date(p.normalReleaseAt) - new Date(p.releaseAt)) / 86400000)
-        : "-";
-      const flags = [
-        p.isFeatured ? "Featured" : "",
-        p.isNewArrival ? "New" : "",
-        p.earlyAccess ? "Early" : ""
-      ].filter(Boolean).join(", ") || "-";
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${imgUrl ? `<img class="miniimg" src="${imgUrl}" />` : "-"}</td>
-        <td class="title-cell">${p.title || "-"}</td>
-        <td>${p.category || "-"}</td>
-        <td>₹${(p.price ?? 0).toLocaleString("en-IN")}</td>
-        <td>${launch}</td>
-        <td>${delay}</td>
-        <td>${flags}</td>
-        <td><button class="danger" onclick="deleteProduct('${p._id}')">Delete</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="8">Error loading products</td></tr>`;
-  }
-}
-
-/* ---------------------------
-  PRODUCTS: ADD
-  Uses backend: POST /api/admin/products
----------------------------- */
-async function addProduct() {
-  const status = document.getElementById("status");
-  const adminKeyInput = document.getElementById("adminKey");
-  const key = getAdminKey() || (adminKeyInput?.value || "").trim();
-
-  if (!key) {
-    if (status) status.innerText = "Status: Missing admin key";
-    return;
-  }
-
-  if (!getAdminKey() && key) setAdminKey(key);
-
-  const title = (document.getElementById("title").value || "").trim();
-  const price = Number(document.getElementById("price").value || 0);
-  const category = document.getElementById("category").value;
-  const imagesText = (document.getElementById("images").value || "").trim();
-  const description = (document.getElementById("description").value || "").trim();
-  const stock = Number(document.getElementById("stock").value || 0);
-  const launchDateVal = document.getElementById("launchDate").value;
-  const earlyDays = Number(document.getElementById("earlyDays").value || 0);
-  const isFeatured = document.getElementById("isFeatured").checked;
-  const isNewArrival = document.getElementById("isNewArrival").checked;
-
-  if (!title || !price || !category) {
-    if (status) status.innerText = "Status: Title/Price/Category required";
-    return;
-  }
-
-  const body = {
-    title,
-    price,
-    category,
-    description,
-    stock,
-    isFeatured,
-    isNewArrival
-  };
-
-  // ✅ images stored as JSON string [{url, publicId, order}]
-  if (imagesText) {
-    try {
-      body.images = JSON.parse(imagesText);
-    } catch {
-      body.images = [];
-    }
-  } else {
-    body.images = [];
-  }
-
-  if (launchDateVal) body.launchDate = new Date(launchDateVal).toISOString();
-  if (!isNaN(earlyDays) && earlyDays > 0) body.earlyAccessDaysForNormal = earlyDays;
-
-  try {
-    if (status) status.innerText = "Status: Adding...";
-    const res = await fetch(`${API_BASE}/api/admin/products`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-key": getAdminKey()
-      },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      const t = await res.text();
-      if (status) status.innerText = `Status: Failed (${t})`;
-      return;
-    }
-
-    if (status) status.innerText = "Status: Product added ✅";
-
-    // ✅ Clear form after success
-    document.getElementById("title").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("description").value = "";
-    document.getElementById("stock").value = "";
-    document.getElementById("launchDate").value = "";
-    document.getElementById("earlyDays").value = "3";
-    document.getElementById("isFeatured").checked = false;
-    document.getElementById("isNewArrival").checked = false;
-
-    document.getElementById("imageUpload").value = "";
-    document.getElementById("uploadPreview").innerHTML = "";
-    document.getElementById("images").value = "";
-    const uploadStatus = document.getElementById("uploadStatus");
-    if (uploadStatus) uploadStatus.innerText = "Upload: Ready";
-
-    await loadProducts();
-  } catch (e) {
-    if (status) status.innerText = "Status: Error (server down?)";
-  }
-}
-
-/* ---------------------------
-  PRODUCTS: DELETE
----------------------------- */
-async function deleteProduct(id) {
-  if (!confirm("Delete this product?")) return;
-
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/products/${id}`, {
-      method: "DELETE",
-      headers: { "x-admin-key": getAdminKey() }
-    });
-
-    if (!res.ok) {
-      alert("Delete failed (unauthorized or server error)");
-      return;
-    }
-
-    await loadProducts();
-  } catch {
-    alert("Server error");
-  }
+  const d=await res.json();
+  statOrders.innerText=d.totalOrders||0;
+  statRevenue.innerText=(d.totalRevenue||0).toLocaleString("en-IN");
+  statTop.innerText=d.topProducts?.[0]?.title||"—";
 }
 </script>
 
