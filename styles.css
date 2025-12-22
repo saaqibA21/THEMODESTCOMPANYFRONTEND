@@ -619,4 +619,25 @@ body {
   }
 }
 
+/* Logo text default (PC) */
+.logo-full {
+  display: inline;
+}
+
+.logo-short {
+  display: none;
+}
+
+/* Mobile only */
+@media (max-width: 768px) {
+  .logo-full {
+    display: none;
+  }
+
+  .logo-short {
+    display: inline;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+}
 
