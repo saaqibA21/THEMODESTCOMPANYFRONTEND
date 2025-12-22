@@ -841,3 +841,17 @@ body {
   font-weight: 600;
   color: #000;
 }
+@media (max-width: 768px) {
+  .special-offer {
+    padding: 80px 20px;
+  }
+
+  .offer-content h2 {
+    font-size: 28px;
+  }
+
+  .offer-content p {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+}
