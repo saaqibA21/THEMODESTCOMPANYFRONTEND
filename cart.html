@@ -253,7 +253,13 @@ async function checkout() {
       `Total: ₹${checkoutSummary.total}`
     );
 
-    // 🔜 R
+    // 🔜 Razorpay comes next
+
+  } catch (err) {
+    console.error(err);
+    alert("Network error during checkout");
+  }
+}
 
 
 loadProducts();
