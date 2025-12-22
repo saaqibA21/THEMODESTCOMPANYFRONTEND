@@ -298,18 +298,31 @@ body {
    SPECIAL OFFER
 ========================= */
 .special-offer {
-  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
-    url("images/display/offer-bg.jpg") center/cover no-repeat;
-  padding: 120px 40px;
-  text-align: center;
-  margin-top: 120px;
+  position: relative;
+  background-image: url("images/banners/special-offer.jpg"); /* 👈 change path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 100px 24px;
+  margin-top: 80px;
 }
 
-.special-offer h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 40px;
-  color: var(--gold);
+/* Dark overlay for readability */
+.special-offer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
 }
+
+/* Keep content above overlay */
+.offer-content {
+  position: relative;
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
 
 /* =========================
    SIDE MENU + OVERLAY
