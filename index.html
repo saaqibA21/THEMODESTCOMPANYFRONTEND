@@ -36,10 +36,15 @@
         <p class="qv-price" id="quickPrice"></p>
 
         <div class="qv-qty">
-          <button class="qty-btn" onclick="qvQty(-1)" aria-label="Decrease quantity">−</button>
-          <span id="qvQty">1</span>
-          <button class="qty-btn" onclick="qvQty(1)" aria-label="Increase quantity">+</button>
-        </div>
+  <button class="qty-btn" onclick="qvQty(-1)">−</button>
+
+  <div class="qty-value">
+    <span id="qvQty">1</span>
+  </div>
+
+  <button class="qty-btn" onclick="qvQty(1)">+</button>
+</div>
+
 
         <div class="qv-actions">
           <button class="primary-btn qv-add" onclick="addToCartFromQuick()">Add to Cart</button>
