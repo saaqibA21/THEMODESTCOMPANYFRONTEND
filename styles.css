@@ -592,3 +592,31 @@ body {
   }
 }
 
+
+@media (max-width: 768px) {
+  .quick-view-content {
+    width: 95%;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 14px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .product-info h3 {
+    font-size: 14px;
+  }
+
+  .product-info p {
+    font-size: 13px;
+  }
+}
+
+
