@@ -581,14 +581,23 @@ function toggleMenu() {
 ---------------------------- */
 function filterCategory(category) {
   const cards = document.querySelectorAll(".product-card");
+
   cards.forEach(card => {
     const cats = card.dataset.category || "";
-    card.style.display = (category === "all" || cats.includes(category)) ? "flex" : "none";
+    card.style.display =
+      category === "all" || cats.includes(category) ? "flex" : "none";
   });
 
-  // close menu after selection
+  // 🔥 SCROLL TO PRODUCTS SECTION
+  const productsSection = document.getElementById("featured");
+  if (productsSection) {
+    productsSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  // 🔥 CLOSE MENU AFTER SELECTION
   toggleMenu();
 }
+
 
 /* ---------------------------
   SEARCH (NAME BASED)
