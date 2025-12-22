@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile | The Modest Company</title>
+
+  <link rel="icon" type="image/png" href="images/logo.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Razorpay -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --black:#000;
+      --soft-black:#0e0e0e;
+      --gold:#c9a24d;
+      --gold-hover:#b18a3d;
+      --white:#fff;
+      --muted:#b5b5b5;
+      --border:#1f1f1f;
+    }
+
+    * {
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:"Inter",sans-serif;
+    }
+
+    body {
+      background:var(--black);
+      color:var(--white);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .profile-card {
+      background:var(--soft-black);
+      border:1px solid var(--border);
+      padding:48px;
+      width:100%;
+      max-width:480px;
+    }
+
+    h1 {
+      font-family:"Playfair Display",serif;
+      color:var(--gold);
+      margin-bottom:8px;
+      font-size:30px;
+    }
+
+    .subtitle {
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:30px;
+    }
+
+    .row {
+      margin-bottom:18px;
+      font-size:14px;
+    }
+
+    .label {
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .value {
+      margin-top:4px;
+      font-weight:500;
+    }
+
+    .membership {
+      margin-top:24px;
+      padding:16px;
+      border:1px solid var(--border);
+      background:#000;
+    }
+
+    .badge {
+      display:inline-block;
+      margin-top:8px;
+      padding:6px 12px;
+      font-size:12px;
+      background:var(--gold);
+      color:#000;
+    }
+
+    .plus-expiry {
+      font-size:12px;
+      margin-top:6px;
+      color:var(--muted);
+    }
+
+    button {
+      width:100%;
+      padding:14px;
+      margin-top:20px;
+      border:none;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    .upgrade-btn {
+      background:var(--gold);
+      color:#000;
+    }
+
+    .upgrade-btn:hover {
+      background:var(--gold-hover);
+    }
+
+    .logout-btn {
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--white);
+    }
+
+    .logout-btn:hover {
+      border-color:var(--gold);
+      color:var(--gold);
+    }
+
+    .loading {
+      text-align:center;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="profile-card">
+  <h1>My Profile</h1>
+  <div class="subtitle">Account & Membership details</div>
+
+  <div id="loading" class="loading">Loading profile...</div>
+
+  <div id="profileContent" style="display:none;">
+    <div class="row">
+      <div class="label">Name</div>
+      <div class="value" id="name"></div>
+    </div>
+
+    <div class="row">
+      <div class="label">Email</div>
+      <div class="value" id="email"></div>
+    </div>
+
+    <div class="row">
+      <div class="label">Phone</div>
+      <div class="value" id="phone"></div>
+    </div>
+
+    <div class="membership">
+      <div class="label">Membership</div>
+      <div class="value" id="membership"></div>
+      <div id="expiry" class="plus-expiry"></div>
+      <div id="badge" class="badge"></div>
+    </div>
+
+    <button id="upgradeBtn" class="upgrade-btn" style="display:none;">
+      Upgrade to PLUS — ₹100/month
+    </button>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://themodestcompany.onrender.com";
+
+const token = localStorage.getItem("modest_token");
+
+if (!token) {
+  window.location.href = "login.html";
+}
+
+async function loadProfile() {
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/me`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!res.ok) throw new Error();
+
+    const data = await res.json();
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("profileContent").style.display = "block";
+
+    document.getElementById("name").textContent = data.name;
+    document.getElementById("email").textContent = data.email;
+    document.getElementById("phone").textContent = data.phone || "-";
+
+    if (data.membership === "plus") {
+      document.getElementById("membership").textContent = "PLUS Member";
+      document.getElementById("badge").textContent = "PLUS ACTIVE";
+      document.getElementById("expiry").textContent =
+        "Valid till: " + new Date(data.plusExpiresAt).toDateString();
+    } else {
+      document.getElementById("membership").textContent = "Normal Member";
+      document.getElementById("badge").textContent = "FREE";
+      document.getElementById("upgradeBtn").style.display = "block";
+    }
+
+  } catch {
+    localStorage.removeItem("modest_token");
+    window.location.href = "login.html";
+  }
+}
+
+document.getElementById("upgradeBtn").onclick = async () => {
+  const res = await fetch(`${API_BASE}/api/membership/create-order`, {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+
+  const order = await res.json();
+
+  const options = {
+    key: "RAZORPAY_KEY_ID", // replace with real key
+    amount: order.amount,
+    currency: "INR",
+    name: "The Modest Company",
+    description: "PLUS Membership (₹100/month)",
+    order_id: order.id,
+    handler: async function () {
+      await fetch(`${API_BASE}/api/membership/verify`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      location.reload();
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+};
+
+function logout() {
+  localStorage.removeItem("modest_token");
+  window.location.href = "login.html";
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | The Modest Company</title>
+
+  <link rel="icon" type="image/png" href="images/logo.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #000;
+      --soft-black: #0e0e0e;
+      --gold: #c9a24d;
+      --gold-hover: #b18a3d;
+      --white: #fff;
+      --muted: #b5b5b5;
+      --border: #1f1f1f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      background: var(--soft-black);
+      border: 1px solid var(--border);
+      padding: 48px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-card h1 {
+      font-family: "Playfair Display", serif;
+      color: var(--gold);
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 22px;
+      background: #000;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    button {
+      width: 100%;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 14px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.25s ease;
+    }
+
+    button:hover {
+      background: var(--gold-hover);
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-top: 14px;
+      display: none;
+    }
+
+    .footer-text {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-text a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h1>Welcome Back</h1>
+    <p>Login to continue shopping with MODEST</p>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="email" required />
+
+      <label>Password</label>
+      <input type="password" id="password" required />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="footer-text">
+      New here? <a href="signup.html">Create an account</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://themodestcompany.onrender.com";
+
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = "none";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.message || "Login failed";
+          errorMsg.style.display = "block";
+          return;
+        }
+
+        // Save JWT
+        localStorage.setItem("modest_token", data.token);
+
+        // Redirect
+        window.location.href = "index.html";
+
+      } catch (err) {
+        errorMsg.textContent = "Server not reachable. Try again.";
+        errorMsg.style.display = "block";
+      }
+    });
+  </script>
+
+</body>
+</html>

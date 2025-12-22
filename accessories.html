@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- SEO: BURKA -->
+<title>Luxury Shawls & Co-ords | The Modest Company</title>
+
+<meta name="description"
+      content="Explore luxury shawls and co-ords made from soft, breathable fabrics. Designed for comfort and elegance." />
+
+<meta name="keywords"
+      content="shawl for women, modest shawl, luxury co ords, modest fashion india" />
+
+<link rel="canonical" href="https://themodestcompany.com/shawl.html" />
+
+<meta property="og:title" content="Luxury Shawls & Co-ords | The Modest Company" />
+<meta property="og:description"
+      content="Premium shawls & co-ords for effortless modest elegance." />
+<meta property="og:image" content="https://themodestcompany.com/images/seo/shawl.jpg" />
+<meta property="og:url" content="https://themodestcompany.com/shawl.html" />
+
+
+<meta name="description"
+      content="Shop premium burkas crafted with elegant silhouettes and breathable fabrics. Designed for modern modest fashion at The Modest Company." />
+
+<meta name="keywords"
+      content="burka for women, modest burka, premium burka india, islamic fashion burka" />
+
+<link rel="canonical" href="https://themodestcompany.com/burka.html" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Premium Burka Collection | The Modest Company" />
+<meta property="og:description"
+      content="Discover elegant, breathable, premium burkas designed for modern modest living." />
+<meta property="og:image" content="https://themodestcompany.com/images/seo/burka.jpg" />
+<meta property="og:url" content="https://themodestcompany.com/burka.html" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Premium Burka Collection | The Modest Company" />
+<meta name="twitter:description"
+      content="Modern modest burkas with premium craftsmanship." />
+
+  <link rel="icon" href="images/logo.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">The Modest Company</div>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="burka.html" class="active">Burka</a>
+    <a href="shawl.html">Shawl</a>
+    <a href="accessories.html">Accessories</a>
+  </nav>
+  <a href="cart.html" class="icon-link cart-icon">
+    <img src="images/icons/cart.png" />
+    <span class="cart-count" id="cartCount">0</span>
+  </a>
+</header>
+
+<section class="products">
+  <div class="section-head">
+    <h2>Burka Collection</h2>
+  </div>
+
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<script>
+const API_BASE = "https://themodestcompany.onrender.com";
+ = "http://localhost:5000";
+let cart = JSON.parse(localStorage.getItem("tm_cart")) || [];
+let wishlist = JSON.parse(localStorage.getItem("tm_wishlist")) || [];
+
+updateCartCount();
+
+/* ---------------- LOAD BURKA ONLY ---------------- */
+async function loadBurka() {
+  const res = await fetch(`${API_BASE}/api/products`);
+  const products = await res.json();
+  
+  const accessories = products.filter(p => p.category === "accessories");
+
+
+  document.getElementById("productGrid").innerHTML =
+    burkas.map(productCardHtml).join("");
+
+  paintWishlistHearts();
+}
+
+function productCardHtml(p) {
+  const img = p.images?.[0] || "";
+  const price = p.effectivePrice ?? p.price;
+
+  return `
+  <div class="product-card"
+    data-id="${p._id}"
+    data-name="${p.title}"
+    data-price="${price}"
+    data-img="${img}"
+    data-category="${p.category}">
+    <div class="product-image">
+      <img src="${img}">
+      <div class="product-overlay">
+        <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
+      </div>
+    </div>
+    <div class="product-info">
+      <div class="pi-top">
+        <h3>${p.title}</h3>
+        <button class="wish-btn" onclick="toggleWishlist(this)">♡</button>
+      </div>
+      <p>₹${price.toLocaleString("en-IN")}</p>
+      <button class="outline-btn" onclick="addToCart('${p._id}')">Add to Cart</button>
+    </div>
+  </div>`;
+}
+
+/* ---- CART + WISHLIST (shared logic) ---- */
+function addToCart(id){ cart.push(id); saveCart(); toast("Added to cart"); }
+function saveCart(){ localStorage.setItem("tm_cart", JSON.stringify(cart)); updateCartCount(); }
+function updateCartCount(){ document.getElementById("cartCount").innerText = cart.length; }
+
+function toggleWishlist(btn){
+  const id = btn.closest(".product-card").dataset.id;
+  const i = wishlist.indexOf(id);
+  if(i>=0) wishlist.splice(i,1); else wishlist.push(id);
+  localStorage.setItem("tm_wishlist", JSON.stringify(wishlist));
+  paintWishlistHearts();
+}
+function paintWishlistHearts(){
+  document.querySelectorAll(".product-card").forEach(c=>{
+    c.querySelector(".wish-btn").innerText =
+      wishlist.includes(c.dataset.id) ? "♥" : "♡";
+  });
+}
+
+/* ---- QUICK VIEW (reused) ---- */
+let currentQuickId=null, quickQty=1;
+function openQuickView(btn){
+  const c=btn.closest(".product-card");
+  currentQuickId=c.dataset.id;
+  addToCart(currentQuickId);
+}
+
+function toast(msg){
+  alert(msg);
+}
+
+loadBurka();
+</script>
+
+</body>
+</html>

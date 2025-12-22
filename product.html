@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product | The Modest Company</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .product-page {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+    }
+
+    .thumbs img {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+
+    .thumbs img.active {
+      opacity: 1;
+      border-color: var(--gold);
+    }
+
+    .main-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-image img {
+      width: 100%;
+      transition: transform 0.3s ease;
+      cursor: zoom-in;
+    }
+
+    .main-image:hover img {
+      transform: scale(1.1);
+    }
+
+    .pd-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 12px;
+      color: var(--gold);
+    }
+
+    .pd-price {
+      font-size: 22px;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .pd-desc {
+      color: var(--muted);
+      margin-bottom: 30px;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .qty-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--white);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .pd-actions {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .outline-btn {
+      background: none;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 12px 24px;
+      cursor: pointer;
+    }
+
+    .wish-toggle {
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--gold);
+      background: none;
+      border: none;
+    }
+
+    @media (max-width: 900px) {
+      .product-page {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER (reuse your main header later if needed) -->
+<header class="header">
+  <div class="logo">The Modest Company</div>
+  <div class="header-actions">
+    <a href="cart.html" class="icon-link">
+      <img src="images/icons/cart.png" alt="Cart" />
+      <span class="cart-count" id="cartCount">0</span>
+    </a>
+  </div>
+</header>
+
+<!-- PRODUCT PAGE -->
+<section class="product-page"
+  data-id="p1"
+  data-name="Linen Abaya"
+  data-price="3499"
+  data-images="images/display/Linen.png,images/display/2.jpg,images/display/3.jpg">
+
+  <!-- GALLERY -->
+  <div class="gallery">
+    <div class="thumbs" id="thumbs"></div>
+    <div class="main-image">
+      <img id="mainImg" src="" alt="Product Image" />
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="details">
+    <h1 class="pd-title" id="pdTitle"></h1>
+    <div class="pd-price" id="pdPrice"></div>
+    <p class="pd-desc">
+      Premium modest wear crafted with breathable fabric,
+      perfect for everyday elegance and comfort.
+    </p>
+
+    <div class="qty-box">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <span id="qty">1</span>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+
+    <div class="pd-actions">
+      <button class="primary-btn" onclick="addToCart()">Add to Cart</button>
+      <button class="wish-toggle" onclick="toggleWishlist()">♡</button>
+    </div>
+  </div>
+</section>
+
+<script>
+let qty = 1;
+let cart = JSON.parse(localStorage.getItem("tm_cart")) || [];
+let wishlist = JSON.parse(localStorage.getItem("tm_wishlist")) || [];
+
+const page = document.querySelector(".product-page");
+const id = page.dataset.id;
+const name = page.dataset.name;
+const price = page.dataset.price;
+const images = page.dataset.images.split(",");
+
+document.getElementById("pdTitle").innerText = name;
+document.getElementById("pdPrice").innerText = "₹" + Number(price).toLocaleString("en-IN");
+
+const mainImg = document.getElementById("mainImg");
+const thumbs = document.getElementById("thumbs");
+
+images.forEach((src, i) => {
+  const img = document.createElement("img");
+  img.src = src;
+  if (i === 0) {
+    img.classList.add("active");
+    mainImg.src = src;
+  }
+  img.onclick = () => {
+    document.querySelectorAll(".thumbs img").forEach(t => t.classList.remove("active"));
+    img.classList.add("active");
+    mainImg.src = src;
+  };
+  thumbs.appendChild(img);
+});
+
+function changeQty(n) {
+  qty = Math.max(1, qty + n);
+  document.getElementById("qty").innerText = qty;
+}
+
+function addToCart() {
+  for (let i = 0; i < qty; i++) cart.push(id);
+  localStorage.setItem("tm_cart", JSON.stringify(cart));
+  updateCartCount();
+  alert("Added to cart");
+}
+
+function toggleWishlist() {
+  const i = wishlist.indexOf(id);
+  if (i >= 0) wishlist.splice(i, 1);
+  else wishlist.push(id);
+  localStorage.setItem("tm_wishlist", JSON.stringify(wishlist));
+  alert(wishlist.includes(id) ? "Wishlisted" : "Removed from wishlist");
+}
+
+function updateCartCount() {
+  document.getElementById("cartCount").innerText = cart.length;
+}
+updateCartCount();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart | The Modest Company</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .cart-page {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 24px;
+    }
+
+    .cart-page h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      margin-bottom: 30px;
+    }
+
+    .cart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 90px;
+      height: 120px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+
+    .ci-name {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .ci-price {
+      color: var(--gold);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .ci-qty {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .remove-btn:hover {
+      color: var(--gold);
+    }
+
+    .summary {
+      border: 1px solid var(--border);
+      padding: 24px;
+      height: fit-content;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .summary-row.total {
+      font-size: 18px;
+      color: var(--gold);
+      margin-top: 20px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .cart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">The Modest Company</div>
+</header>
+
+<section class="cart-page">
+  <h1>Your Cart</h1>
+  <div id="cartContainer"></div>
+</section>
+
+<script>
+/* ===============================
+   CONFIG
+================================ */
+const API_BASE = "https://themodestcompany.onrender.com";
+
+
+/* ===============================
+   STATE
+================================ */
+let cart = JSON.parse(localStorage.getItem("tm_cart")) || [];
+let productsMap = {};
+let checkoutSummary = null;
+
+/* ===============================
+   HELPERS
+================================ */
+function groupCart() {
+  const map = {};
+  cart.forEach(id => map[id] = (map[id] || 0) + 1);
+  return map;
+}
+
+function persistCart() {
+  localStorage.setItem("tm_cart", JSON.stringify(cart));
+}
+
+/* ===============================
+   LOAD PRODUCTS FROM MONGO
+================================ */
+async function loadProducts() {
+  const res = await fetch(`${API_BASE}/api/products`);
+  const products = await res.json();
+
+  products.forEach(p => {
+    productsMap[p._id] = p;
+  });
+
+  renderCart();
+}
+
+/* ===============================
+   RENDER CART
+================================ */
+function renderCart() {
+  const container = document.getElementById("cartContainer");
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="empty">
+        <p>Your cart is empty.</p>
+        <a href="index.html" class="primary-btn" style="margin-top:20px;">Continue Shopping</a>
+      </div>
+    `;
+    return;
+  }
+
+  const grouped = groupCart();
+  let subtotal = 0;
+  let itemsHTML = "";
+
+  Object.keys(grouped).forEach(id => {
+    const p = productsMap[id];
+    if (!p) return;
+
+    const qty = grouped[id];
+    const price = p.effectivePrice || p.price;
+    const itemTotal = price * qty;
+    subtotal += itemTotal;
+
+    itemsHTML += `
+      <div class="cart-item">
+        <img src="${p.images?.[0] || 'images/placeholder.png'}" />
+        <div>
+          <div class="ci-name">${p.title}</div>
+          <div class="ci-price">₹${price.toLocaleString("en-IN")}</div>
+          <div class="ci-qty">
+            <button class="qty-btn" onclick="changeQty('${id}', -1)">−</button>
+            <span>${qty}</span>
+            <button class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeItem('${id}')">Remove</button>
+      </div>
+    `;
+  });
+
+  const shipping = subtotal > 2999 ? 0 : 149;
+  const total = subtotal + shipping;
+
+  container.innerHTML = `
+    <div class="cart-grid">
+      <div>${itemsHTML}</div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₹${subtotal.toLocaleString("en-IN")}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>${shipping === 0 ? "FREE" : "₹149"}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>₹${total.toLocaleString("en-IN")}</span>
+        </div>
+
+        <button class="primary-btn checkout-btn" onclick="checkout()">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ===============================
+   CART ACTIONS
+================================ */
+function changeQty(id, delta) {
+  if (delta > 0) {
+    cart.push(id);
+  } else {
+    const idx = cart.indexOf(id);
+    if (idx >= 0) cart.splice(idx, 1);
+  }
+  persistCart();
+  renderCart();
+}
+
+function removeItem(id) {
+  cart = cart.filter(x => x !== id);
+  persistCart();
+  renderCart();
+}
+
+/* ===============================
+   CHECKOUT → BACKEND
+================================ */
+async function checkout() {
+  const token = localStorage.getItem("auth_token");
+  if (!token) {
+    alert("Please login to continue");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const grouped = groupCart();
+  const items = Object.keys(grouped).map(id => ({
+    productId: id,
+    qty: grouped[id]
+  }));
+
+  const res = await fetch(`${API_BASE}/api/orders/checkout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ items })
+  });
+
+  if (!res.ok) {
+    alert("Checkout failed");
+    return;
+  }
+
+  checkoutSummary = await res.json();
+
+  alert(
+    `Order Summary:\n\n` +
+    `Subtotal: ₹${checkoutSummary.subtotal}\n` +
+    `Discount: ₹${checkoutSummary.discount}\n` +
+    `Total: ₹${checkoutSummary.total}`
+  );
+
+  // NEXT STEP → Razorpay redirect
+}
+
+/* ===============================
+   INIT
+================================ */
+loadProducts();
+</script>
+
+</body>
+</html>
