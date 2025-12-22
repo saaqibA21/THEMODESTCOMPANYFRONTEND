@@ -17,8 +17,14 @@
 <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 
 <!-- QUICK VIEW OVERLAY/MODAL -->
-<div class="quick-view" id="quickView" aria-hidden="true">
-  <div class="quick-view-content" role="dialog" aria-modal="true" aria-label="Quick View">
+<div class="quick-view" id="quickView" aria-hidden="true" onclick="closeQuickView()">
+
+  <div class="quick-view-content"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Quick View"
+     onclick="event.stopPropagation()">
+
     <button class="qv-close" onclick="closeQuickView()" aria-label="Close">×</button>
     <div class="qv-body">
       <div class="qv-image-wrap">
