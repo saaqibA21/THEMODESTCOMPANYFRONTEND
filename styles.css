@@ -640,3 +640,44 @@ body {
     letter-spacing: 1px;
   }
 }
+
+
+/* ==============================
+   QUICK VIEW – GLOBAL FIX
+================================ */
+
+.quick-view {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-view-content {
+  background: #fff;
+  width: 90%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  position: relative;
+}
+
+/* Close button – ALWAYS visible */
+.qv-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10000;
+  background: #fff;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
