@@ -570,3 +570,25 @@ body {
   .products { padding: 60px 24px; }
   .hero { padding: 0 24px; text-align: center; }
 }
+
+
+/* Mobile brand name */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .logo-text::after {
+    content: "TMC";
+  }
+  .logo-text {
+    visibility: hidden;
+    position: relative;
+  }
+  .logo-text::after {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+  }
+}
+
