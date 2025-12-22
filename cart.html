@@ -201,9 +201,13 @@ function removeItem(id) {
 
 /* ✅ FIXED HERE */
 async function checkout() {
-  const token = localStorage.getItem("token"); // ✅ CORRECT KEY
+  // 🔥 Always re-read token freshly
+  const token =
+    localStorage.getItem("auth_token") ||
+    localStorage.getItem("modest_token");
 
-  if (!token) {
+  // Strict check
+  if (!token || token.length < 20) {
     alert("Please login to continue");
     window.location.href = "login.html";
     return;
@@ -215,29 +219,42 @@ async function checkout() {
     qty: grouped[id]
   }));
 
-  const res = await fetch(`${API_BASE}/api/orders/checkout`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({ items })
-  });
+  try {
+    const res = await fetch(`${API_BASE}/api/orders/checkout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ items })
+    });
 
-  if (!res.ok) {
-    alert("Checkout failed");
-    return;
-  }
+    if (res.status === 401) {
+      alert("Session expired. Please login again.");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("modest_token");
+      window.location.href = "login.html";
+      return;
+    }
 
-  checkoutSummary = await res.json();
+    if (!res.ok) {
+      const txt = await res.text();
+      console.error(txt);
+      alert("Checkout failed");
+      return;
+    }
 
-  alert(
-    `Order Summary:\n\n` +
-    `Subtotal: ₹${checkoutSummary.subtotal}\n` +
-    `Discount: ₹${checkoutSummary.discount}\n` +
-    `Total: ₹${checkoutSummary.total}`
-  );
-}
+    checkoutSummary = await res.json();
+
+    alert(
+      `Order Summary:\n\n` +
+      `Subtotal: ₹${checkoutSummary.subtotal}\n` +
+      `Discount: ₹${checkoutSummary.discount}\n` +
+      `Total: ₹${checkoutSummary.total}`
+    );
+
+    // 🔜 R
+
 
 loadProducts();
 </script>
