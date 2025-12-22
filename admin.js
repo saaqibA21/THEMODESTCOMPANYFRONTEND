@@ -1,4 +1,5 @@
-const API = "http://localhost:5000";
+const API = "https://themodestcompany.onrender.com";
+
 
 /* ================================
    AUTH
