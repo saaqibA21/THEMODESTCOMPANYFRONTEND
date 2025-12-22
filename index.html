@@ -596,11 +596,20 @@ function filterCategory(category) {
 function searchProducts(query) {
   query = (query || "").toLowerCase().trim();
 
+  // 🔥 AUTO SCROLL TO PRODUCTS WHEN SEARCH STARTS
+  if (query.length > 0) {
+    const productsSection = document.getElementById("featured");
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
   document.querySelectorAll(".product-card").forEach(card => {
     const name = (card.dataset.name || "").toLowerCase();
     card.style.display = name.includes(query) ? "flex" : "none";
   });
 }
+
 
 /* ---------------------------
   SORT (FEATURED SECTION ONLY)
