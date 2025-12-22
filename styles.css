@@ -299,15 +299,14 @@ body {
 ========================= */
 .special-offer {
   position: relative;
-  background-image: url("images/DISCOUNT10MOD.png"); /* 👈 change path */
+  background-image: url("images/DISCOUNT10MOD");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 100px 24px;
+  padding: 120px 24px; /* ⬅ more breathing room */
   margin-top: 80px;
 }
 
-/* Dark overlay for readability */
 .special-offer::before {
   content: "";
   position: absolute;
@@ -315,12 +314,28 @@ body {
   background: rgba(0, 0, 0, 0.65);
 }
 
-/* Keep content above overlay */
 .offer-content {
   position: relative;
-  max-width: 600px;
+  max-width: 640px;
   margin: auto;
   text-align: center;
+}
+
+/* 🔥 FIX SPACING HERE */
+.offer-content h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 36px;
+  margin-bottom: 18px; /* ⬅ space below heading */
+}
+
+.offer-content p {
+  font-size: 16px;
+  line-height: 1.7;     /* ⬅ better readability */
+  margin-bottom: 32px; /* ⬅ space before button */
+}
+
+.offer-content .primary-btn {
+  padding: 14px 36px;
 }
 
 
