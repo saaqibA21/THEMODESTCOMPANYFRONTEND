@@ -8,6 +8,12 @@ let uploadedImages = [];
 let editingProduct = null;
 let revenueChart = null;
 
+const adminLoginKey = document.getElementById("adminLoginKey");
+const loginError = document.getElementById("loginError");
+const adminLoginOverlay = document.getElementById("adminLoginOverlay");
+const adminWrap = document.getElementById("adminWrap");
+
+
 /* ================================
    DOM REFERENCES
 ================================ */
