@@ -1,5 +1,16 @@
 const API = "https://themodestcompany.onrender.com";
 
+document.addEventListener("DOMContentLoaded", () => {
+
+  window.adminLoginKey = document.getElementById("adminLoginKey");
+  window.loginError = document.getElementById("loginError");
+  window.adminLoginOverlay = document.getElementById("adminLoginOverlay");
+  window.adminWrap = document.getElementById("adminWrap");
+
+  checkAuth();
+});
+
+
 /* ================================
    GLOBAL STATE
 ================================ */
@@ -8,10 +19,6 @@ let uploadedImages = [];
 let editingProduct = null;
 let revenueChart = null;
 
-const adminLoginKey = document.getElementById("adminLoginKey");
-const loginError = document.getElementById("loginError");
-const adminLoginOverlay = document.getElementById("adminLoginOverlay");
-const adminWrap = document.getElementById("adminWrap");
 
 
 /* ================================
