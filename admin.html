@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- Charts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -34,8 +35,13 @@
     .danger:hover{border-color:#ffb3b3}
     .toggle{padding:6px 10px;border:1px solid var(--border);cursor:pointer;font-size:12px}
     .toggle.on{border-color:var(--gold);color:var(--gold)}
+    .split{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 
-    #adminLoginOverlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center}
+    #loginScreen{
+      position:fixed;inset:0;background:#000;z-index:9999;
+      display:flex;align-items:center;justify-content:center
+    }
+    #dashboard{display:none}
 
     /* Edit Modal */
     #editModal{
@@ -61,26 +67,29 @@
 
 <header class="header">
   <div class="logo">Admin Panel</div>
+  <div class="header-actions" style="gap:10px">
+    <button class="btn" onclick="logout()">Logout</button>
+  </div>
 </header>
 
-<!-- LOGIN -->
-<div id="adminLoginOverlay">
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
   <div style="border:1px solid var(--border);padding:32px;width:360px">
     <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">Admin Login</h2>
-    <input id="adminLoginKey" type="password" placeholder="Enter Admin Key" />
-    <button class="btn" style="margin-top:14px;width:100%" onclick="adminLogin()">Enter</button>
+    <input id="loginKey" type="password" placeholder="Enter Admin Key" />
+    <button class="btn" style="margin-top:14px;width:100%" onclick="login()">Enter</button>
     <div id="loginError" style="color:#ffb3b3;font-size:13px;margin-top:10px"></div>
   </div>
 </div>
 
 <!-- DASHBOARD -->
-<div class="admin-wrap" id="adminWrap" style="display:none">
+<div class="admin-wrap" id="dashboard">
 
   <!-- ANALYTICS -->
   <div class="panel">
-    <div class="row" style="justify-content:space-between">
-      <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">Sales Analytics</h2>
-      <select id="analyticsRange" onchange="loadAnalytics()">
+    <div class="split">
+      <h2 style="font-family:'Playfair Display',serif;color:var(--gold);margin:0">Sales Analytics</h2>
+      <select id="rangeSelect" onchange="loadAnalytics()">
         <option value="today">Today</option>
         <option value="week">This Week</option>
         <option value="month">This Month</option>
@@ -89,10 +98,11 @@
 
     <div class="row">
       <div class="tag">Orders: <b id="statOrders">0</b></div>
-      <div class="tag">Revenue: ₹<b id="statRevenue">0</b></div>
+      <div class="tag">Revenue: <b id="statRevenue">₹0</b></div>
+      <div class="tag">Top Product: <b id="statTop">—</b></div>
     </div>
 
-    <canvas id="revenueChart" height="120"></canvas>
+    <canvas id="revenueChartCanvas" height="120"></canvas>
   </div>
 
   <!-- ADD PRODUCT -->
@@ -100,23 +110,27 @@
     <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">Add Product</h2>
 
     <div class="form-grid">
-      <input id="title" placeholder="Title">
-      <input id="price" type="number" placeholder="Price">
+      <input id="title" placeholder="Title" />
+      <input id="price" type="number" placeholder="Price" />
+
       <select id="category">
         <option value="burka">Burka</option>
         <option value="shawl">Shawl</option>
         <option value="accessories">Accessories</option>
       </select>
-      <input id="stock" type="number" placeholder="Stock">
+
+      <input id="stock" type="number" placeholder="Stock" />
 
       <div class="row full">
-        <label>Featured</label><input type="checkbox" id="isFeatured">
-        <label style="margin-left:20px">New Arrival</label><input type="checkbox" id="isNewArrival">
+        <label style="color:var(--muted);font-size:13px">Featured</label>
+        <input type="checkbox" id="isFeatured" />
+        <label style="color:var(--muted);font-size:13px;margin-left:18px">New Arrival</label>
+        <input type="checkbox" id="isNewArrival" />
       </div>
 
       <div class="full">
-        <label>Images</label>
-        <input type="file" id="imageUpload" multiple>
+        <label style="color:var(--muted);font-size:13px;display:block;margin-bottom:8px">Images (Multiple)</label>
+        <input type="file" id="imageUpload" multiple />
         <div class="row" id="uploadPreview"></div>
       </div>
 
@@ -131,11 +145,14 @@
 
   <!-- PRODUCTS -->
   <div class="panel">
-    <div class="row" style="justify-content:space-between">
-      <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">All Products</h2>
-      <div class="row">
-        <input id="searchBox" placeholder="Search…" oninput="renderProducts()" />
-        <input id="lowStock" type="number" value="5" style="width:70px" oninput="renderProducts()" />
+    <div class="split">
+      <h2 style="font-family:'Playfair Display',serif;color:var(--gold);margin:0">All Products</h2>
+      <div class="row" style="margin-top:0">
+        <input id="searchBox" placeholder="Search products..." oninput="renderProducts()" />
+        <div class="tag" style="display:flex;gap:8px;align-items:center">
+          Low stock ≤
+          <input id="lowStock" type="number" value="0" style="width:80px;padding:8px" oninput="renderProducts()" />
+        </div>
       </div>
     </div>
 
@@ -144,6 +161,7 @@
         <tr>
           <th>Image</th>
           <th>Title</th>
+          <th>Category</th>
           <th>Price</th>
           <th>Stock</th>
           <th>Flags</th>
@@ -158,200 +176,48 @@
 <!-- EDIT MODAL -->
 <div id="editModal">
   <div class="modal-card">
-    <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">Edit Product</h2>
+    <div class="split">
+      <h2 style="font-family:'Playfair Display',serif;color:var(--gold);margin:0">Edit Product</h2>
+      <button class="danger" onclick="closeEdit()">Close</button>
+    </div>
 
-    <div class="form-grid">
-      <input id="e_title">
-      <input id="e_price" type="number">
-      <input id="e_stock" type="number">
+    <div class="form-grid" style="margin-top:14px">
+      <input id="e_title" placeholder="Title" />
+      <input id="e_price" type="number" placeholder="Price" />
+
       <select id="e_category">
         <option value="burka">Burka</option>
         <option value="shawl">Shawl</option>
         <option value="accessories">Accessories</option>
       </select>
 
+      <input id="e_stock" type="number" placeholder="Stock" />
+
       <div class="row full">
-        <label>Featured</label><input type="checkbox" id="e_featured">
-        <label style="margin-left:20px">New Arrival</label><input type="checkbox" id="e_new">
+        <label style="color:var(--muted);font-size:13px">Featured</label>
+        <input type="checkbox" id="e_featured" />
+        <label style="color:var(--muted);font-size:13px;margin-left:18px">New Arrival</label>
+        <input type="checkbox" id="e_new" />
       </div>
 
-      <textarea id="e_description" class="full"></textarea>
+      <textarea id="e_description" class="full" placeholder="Description"></textarea>
 
       <div class="full">
-        <label>Images</label>
+        <label style="color:var(--muted);font-size:13px;display:block;margin-bottom:8px">Images</label>
         <div class="img-strip" id="e_images"></div>
-        <input type="file" id="e_imageUpload" multiple>
+        <input type="file" id="e_imageUpload" multiple style="margin-top:10px" />
       </div>
     </div>
 
     <div class="row">
-      <button class="btn" onclick="saveEdit()">Save</button>
+      <button class="btn" onclick="saveEdit()">Save Changes</button>
       <button class="danger" onclick="closeEdit()">Cancel</button>
     </div>
   </div>
 </div>
 
-<script>
-const API="https://themodestcompany.onrender.com";
-let products=[],uploadedImages=[],editing=null,chart=null;
-
-/* AUTH */
-function getKey(){return sessionStorage.getItem("ADMIN_KEY")}
-async function adminLogin(){
-  const k=adminLoginKey.value.trim();
-  const r=await fetch(`${API}/api/admin/products`,{headers:{"x-admin-key":k}});
-  if(!r.ok){loginError.innerText="Invalid key";return}
-  sessionStorage.setItem("ADMIN_KEY",k);
-  adminLoginOverlay.style.display="none";
-  adminWrap.style.display="block";
-  loadProducts();loadAnalytics();
-}
-
-/* IMAGE UPLOAD */
-imageUpload.onchange=async()=>{
-  uploadedImages=[];
-  uploadPreview.innerHTML="";
-  const fd=new FormData();
-  [...imageUpload.files].forEach(f=>fd.append("images",f));
-  const r=await fetch(`${API}/api/admin/upload`,{method:"POST",headers:{"x-admin-key":getKey()},body:fd});
-  const d=await r.json();
-  uploadedImages=d.images||[];
-  uploadedImages.forEach(i=>{
-    const img=document.createElement("img");
-    img.src=i.url;img.className="miniimg";
-    uploadPreview.appendChild(img);
-  });
-};
-
-/* ADD */
-async function addProduct(){
-  status.innerText="Saving...";
-  await fetch(`${API}/api/admin/products`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json","x-admin-key":getKey()},
-    body:JSON.stringify({
-      title:title.value,price:+price.value,stock:+stock.value,
-      category,description:description.value,
-      images:uploadedImages,isFeatured,isNewArrival
-    })
-  });
-  status.innerText="Added ✅";
-  loadProducts();
-}
-
-/* LOAD */
-async function loadProducts(){
-  const r=await fetch(`${API}/api/admin/products`,{headers:{"x-admin-key":getKey()}});
-  products=await r.json();
-  renderProducts();
-}
-
-/* RENDER */
-function renderProducts(){
-  const q=searchBox.value.toLowerCase();
-  const th=+lowStock.value;
-  productRows.innerHTML="";
-  products.filter(p=>{
-    if(q && !p.title.toLowerCase().includes(q))return false;
-    if(p.stock<=th)return true;
-    return true;
-  }).forEach(p=>{
-    productRows.innerHTML+=`
-      <tr>
-        <td>${p.images?.[0]?`<img class="miniimg" src="${p.images[0].url}">`:"—"}</td>
-        <td>${p.title}</td>
-        <td>₹${p.price}</td>
-        <td>${p.stock}</td>
-        <td>
-          <span class="toggle ${p.isFeatured?"on":""}" onclick="toggleFlag('${p._id}','isFeatured')">Featured</span>
-          <span class="toggle ${p.isNewArrival?"on":""}" onclick="toggleFlag('${p._id}','isNewArrival')">New</span>
-        </td>
-        <td>
-          <button class="btn" onclick="openEdit('${p._id}')">Edit</button>
-          <button class="danger" onclick="del('${p._id}')">Delete</button>
-        </td>
-      </tr>`;
-  });
-}
-
-/* DELETE */
-async function del(id){
-  if(!confirm("Delete?"))return;
-  await fetch(`${API}/api/admin/products/${id}`,{method:"DELETE",headers:{"x-admin-key":getKey()}});
-  loadProducts();
-}
-
-/* FLAGS */
-async function toggleFlag(id,f){
-  const p=products.find(x=>x._id===id);
-  p[f]=!p[f];
-  await fetch(`${API}/api/admin/products/${id}`,{
-    method:"PUT",
-    headers:{"Content-Type":"application/json","x-admin-key":getKey()},
-    body:JSON.stringify({[f]:p[f]})
-  });
-  renderProducts();
-}
-
-/* EDIT */
-function openEdit(id){
-  editing=products.find(p=>p._id===id);
-  e_title.value=editing.title;
-  e_price.value=editing.price;
-  e_stock.value=editing.stock;
-  e_category.value=editing.category;
-  e_description.value=editing.description||"";
-  e_featured.checked=!!editing.isFeatured;
-  e_new.checked=!!editing.isNewArrival;
-  renderEditImages();
-  editModal.style.display="flex";
-}
-function closeEdit(){editModal.style.display="none"}
-function renderEditImages(){
-  e_images.innerHTML="";
-  editing.images.forEach((img,i)=>{
-    e_images.innerHTML+=`
-      <div class="img-chip">
-        <img src="${img.url}">
-        <button onclick="removeImg(${i})">×</button>
-      </div>`;
-  });
-}
-function removeImg(i){editing.images.splice(i,1);renderEditImages()}
-e_imageUpload.onchange=async()=>{
-  const fd=new FormData();
-  [...e_imageUpload.files].forEach(f=>fd.append("images",f));
-  const r=await fetch(`${API}/api/admin/upload`,{method:"POST",headers:{"x-admin-key":getKey()},body:fd});
-  const d=await r.json();
-  editing.images.push(...d.images);
-  renderEditImages();
-};
-async function saveEdit(){
-  await fetch(`${API}/api/admin/products/${editing._id}`,{
-    method:"PUT",
-    headers:{"Content-Type":"application/json","x-admin-key":getKey()},
-    body:JSON.stringify({
-      title:e_title.value,price:+e_price.value,stock:+e_stock.value,
-      category:e_category.value,description:e_description.value,
-      images:editing.images,isFeatured:e_featured.checked,isNewArrival:e_new.checked
-    })
-  });
-  closeEdit();loadProducts();
-}
-
-/* ANALYTICS */
-async function loadAnalytics(){
-  const r=await fetch(`${API}/api/admin/analytics?range=${analyticsRange.value}`,{headers:{"x-admin-key":getKey()}});
-  const d=await r.json();
-  statOrders.innerText=d.totalOrders||0;
-  statRevenue.innerText=(d.totalRevenue||0).toLocaleString("en-IN");
-  if(chart)chart.destroy();
-  chart=new Chart(revenueChart,{
-    type:"bar",
-    data:{labels:["Revenue"],datasets:[{data:[d.totalRevenue||0],backgroundColor:"#c9a24d"}]}
-  });
-}
-</script>
+<!-- Your JS -->
+<script src="admin.js"></script>
 
 </body>
 </html>
