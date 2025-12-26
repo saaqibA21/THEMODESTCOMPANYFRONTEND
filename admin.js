@@ -79,7 +79,7 @@ async function uploadImages(files, previewEl) {
     body: fd
   });
 
-  if (!res.ok) throw new Error("Upload failed");
+  if (!res.ok) throw new Error("Image upload failed");
 
   const data = await res.json();
   const imgs = data.images || [];
@@ -113,11 +113,16 @@ async function addProduct() {
       title: title.value.trim(),
       price: Number(price.value),
       stock: Number(stock.value),
-      category: category.value,
+
+      // 🔥 CRITICAL FIX
+      category: String(category.value),
+
       description: description.value.trim(),
       images: uploadedImages,
-      isFeatured: isFeatured.checked,
-      isNewArrival: isNewArrival.checked
+
+      // 🔥 CRITICAL FIX
+      isFeatured: Boolean(isFeatured.checked),
+      isNewArrival: Boolean(isNewArrival.checked)
     };
 
     const res = await fetch(`${API}/api/admin/products`, {
@@ -132,14 +137,20 @@ async function addProduct() {
     }
 
     status.innerText = "Added ✅";
+
     uploadedImages = [];
     uploadPreview.innerHTML = "";
     imageUpload.value = "";
-    title.value = price.value = stock.value = description.value = "";
-    isFeatured.checked = isNewArrival.checked = false;
+
+    title.value = "";
+    price.value = "";
+    stock.value = "";
+    description.value = "";
+    isFeatured.checked = false;
+    isNewArrival.checked = false;
 
     loadProducts();
-  } catch {
+  } catch (e) {
     status.innerText = "Server error";
   }
 }
@@ -158,13 +169,13 @@ async function loadProducts() {
 
 function renderProducts() {
   const q = searchBox.value.toLowerCase();
-  const threshold = Number(lowStock.value);
+  const threshold = Number(lowStock.value || 0);
 
   productRows.innerHTML = "";
 
   products
     .filter(p => !q || p.title.toLowerCase().includes(q))
-    .filter(p => !threshold || p.stock <= threshold || threshold === 0)
+    .filter(p => !threshold || p.stock <= threshold)
     .forEach(p => {
       const img = p.images?.[0]?.url || "";
 
@@ -172,6 +183,7 @@ function renderProducts() {
         <tr>
           <td>${img ? `<img src="${img}" class="miniimg">` : "—"}</td>
           <td>${p.title}</td>
+          <td>${p.category}</td>
           <td>₹${p.price}</td>
           <td>${p.stock}</td>
           <td>
@@ -190,7 +202,7 @@ function renderProducts() {
 }
 
 /* ================================
-   DELETE PRODUCT
+   DELETE
 ================================ */
 async function del(id) {
   if (!confirm("Delete product?")) return;
@@ -204,7 +216,7 @@ async function del(id) {
 }
 
 /* ================================
-   TOGGLES
+   FEATURE / NEW TOGGLES
 ================================ */
 async function toggleFlag(id, field) {
   const p = products.find(x => x._id === id);
@@ -213,7 +225,7 @@ async function toggleFlag(id, field) {
   await fetch(`${API}/api/admin/products/${id}`, {
     method: "PUT",
     headers: headers(),
-    body: JSON.stringify({ [field]: p[field] })
+    body: JSON.stringify({ [field]: Boolean(p[field]) })
   });
 
   renderProducts();
@@ -270,14 +282,14 @@ async function saveEdit() {
     method: "PUT",
     headers: headers(),
     body: JSON.stringify({
-      title: e_title.value,
+      title: e_title.value.trim(),
       price: Number(e_price.value),
       stock: Number(e_stock.value),
-      category: e_category.value,
-      description: e_description.value,
+      category: String(e_category.value),
+      description: e_description.value.trim(),
       images: editingProduct.images,
-      isFeatured: e_featured.checked,
-      isNewArrival: e_new.checked
+      isFeatured: Boolean(e_featured.checked),
+      isNewArrival: Boolean(e_new.checked)
     })
   });
 
@@ -309,6 +321,9 @@ async function loadAnalytics() {
         data: [d.totalRevenue || 0],
         backgroundColor: "#c9a24d"
       }]
+    },
+    options: {
+      plugins: { legend: { display: false } }
     }
   });
 }
