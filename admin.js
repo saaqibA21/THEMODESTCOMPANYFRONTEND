@@ -9,6 +9,11 @@ let editingProduct = null;
 let revenueChart = null;
 
 /* ================================
+   DOM REFERENCES
+================================ */
+const revenueChartCanvas = document.getElementById("revenueChart");
+
+/* ================================
    AUTH
 ================================ */
 function getKey() {
@@ -114,16 +119,19 @@ async function addProduct() {
       price: Number(price.value),
       stock: Number(stock.value),
 
-      // 🔥 CRITICAL FIX
+      // ✅ CRITICAL FIXES
       category: String(category.value),
+      isFeatured: Boolean(isFeatured.checked),
+      isNewArrival: Boolean(isNewArrival.checked),
 
       description: description.value.trim(),
-      images: uploadedImages,
-
-      // 🔥 CRITICAL FIX
-      isFeatured: Boolean(isFeatured.checked),
-      isNewArrival: Boolean(isNewArrival.checked)
+      images: uploadedImages
     };
+
+    if (!body.title || !body.price || !body.category) {
+      status.innerText = "Missing required fields";
+      return;
+    }
 
     const res = await fetch(`${API}/api/admin/products`, {
       method: "POST",
@@ -141,7 +149,6 @@ async function addProduct() {
     uploadedImages = [];
     uploadPreview.innerHTML = "";
     imageUpload.value = "";
-
     title.value = "";
     price.value = "";
     stock.value = "";
@@ -150,7 +157,7 @@ async function addProduct() {
     isNewArrival.checked = false;
 
     loadProducts();
-  } catch (e) {
+  } catch {
     status.innerText = "Server error";
   }
 }
@@ -236,6 +243,7 @@ async function toggleFlag(id, field) {
 ================================ */
 function openEdit(id) {
   editingProduct = products.find(p => p._id === id);
+  if (!editingProduct) return;
 
   e_title.value = editingProduct.title;
   e_price.value = editingProduct.price;
@@ -278,6 +286,8 @@ e_imageUpload.addEventListener("change", async e => {
 });
 
 async function saveEdit() {
+  if (!editingProduct) return;
+
   await fetch(`${API}/api/admin/products/${editingProduct._id}`, {
     method: "PUT",
     headers: headers(),
