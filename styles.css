@@ -1013,3 +1013,20 @@ img {
 .qv-thumb.active {
   border-color:var(--gold);
 }
+
+/* --- Quick View zoom styles --- */
+.qv-image-wrap {
+  max-width: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  background:#000;
+  position: relative;
+}
+
+.qv-image-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.2s ease-out, transform-origin 0.2s ease-out;
+  cursor: zoom-in;
+}
