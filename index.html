@@ -429,6 +429,15 @@ function firstImg(p) {
   return "";
 }
 
+// NEW: return an array of all image URLs
+function allImgs(p) {
+  if (!p || !Array.isArray(p.images)) return [];
+  return p.images
+    .map(i => (typeof i === "string" ? i : i?.url))
+    .filter(Boolean);
+}
+
+
 /**
  * Price to display
  */
@@ -441,11 +450,16 @@ function effectivePrice(p) {
  * Convert Mongo Product -> DOM card HTML
  */
 function productCardHtml(p) {
-  const img = firstImg(p);
+  const imgUrls = allImgs(p);
+  const mainImg = imgUrls[0] || firstImg(p);
+
   const price = effectivePrice(p);
   const title = p.title || "Untitled";
   const cat = p.category || "all";
   const id = p._id;
+
+  // store all images as JSON string in data-images
+  const imagesJson = escapeAttr(JSON.stringify(imgUrls));
 
   return `
   <div class="product-card"
@@ -453,9 +467,10 @@ function productCardHtml(p) {
        data-name="${escapeAttr(title)}"
        data-id="${escapeAttr(id)}"
        data-price="${escapeAttr(String(price))}"
-       data-img="${escapeAttr(img)}">
+       data-img="${escapeAttr(mainImg || "")}"
+       data-images="${imagesJson}">
     <div class="product-image">
-      <img src="${escapeAttr(img)}" alt="${escapeAttr(title)}" />
+      <img src="${escapeAttr(mainImg || "")}" alt="${escapeAttr(title)}" />
       <div class="product-overlay">
         <button class="overlay-btn" onclick="openQuickView(this)">Quick View</button>
       </div>
@@ -472,6 +487,7 @@ function productCardHtml(p) {
     </div>
   </div>`;
 }
+
 
 /**
  * Escape helpers
@@ -530,6 +546,9 @@ let wishlist = JSON.parse(localStorage.getItem("tm_wishlist")) || [];
 let currentQuickId = null;
 let currentQuickWish = false;
 let quickQuantity = 1;
+
+let quickImages = [];
+let quickImageIndex = 0;
 
 updateCartCount();
 paintWishlistHearts();
@@ -608,17 +627,49 @@ function sortProducts(mode) {
 ---------------------------- */
 function openQuickView(btn) {
   const card = btn.closest(".product-card");
+  if (!card) return;
+
   currentQuickId = card.dataset.id;
   quickQuantity = 1;
   document.getElementById("qvQty").innerText = quickQuantity;
 
-  const img = card.dataset.img || card.querySelector("img")?.src || "";
-  const title = card.dataset.name || card.querySelector("h3")?.innerText || "";
-  const price = card.dataset.price ? `₹${Number(card.dataset.price).toLocaleString("en-IN")}` : card.querySelector("p")?.innerText || "";
+  // 1) Read all images from data-images (JSON)
+  let imgs = [];
+  if (card.dataset.images) {
+    try {
+      const parsed = JSON.parse(card.dataset.images);
+      if (Array.isArray(parsed)) imgs = parsed;
+    } catch (e) {
+      console.warn("Failed to parse data-images:", e);
+    }
+  }
 
-  document.getElementById("quickImg").src = img;
+  // 2) Fallback to single data-img / <img>
+  if (!imgs.length) {
+    const fallback =
+      card.dataset.img ||
+      card.querySelector("img")?.src ||
+      "";
+    if (fallback) imgs = [fallback];
+  }
+
+  quickImages = imgs;
+  quickImageIndex = 0;
+
+  renderQuickImage();
+  renderQuickThumbs();
+
+  const title =
+    card.dataset.name || card.querySelector("h3")?.innerText || "";
+  const priceNumber = card.dataset.price
+    ? Number(card.dataset.price)
+    : null;
+  const priceText = priceNumber
+    ? `₹${priceNumber.toLocaleString("en-IN")}`
+    : card.querySelector("p")?.innerText || "";
+
   document.getElementById("quickTitle").innerText = title;
-  document.getElementById("quickPrice").innerText = price;
+  document.getElementById("quickPrice").innerText = priceText;
 
   currentQuickWish = wishlist.includes(currentQuickId);
   const wishBtn = document.querySelector(".qv-wish");
@@ -629,6 +680,34 @@ function openQuickView(btn) {
   qv.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
+
+// NEW: show current big image
+function renderQuickImage() {
+  const imgEl = document.getElementById("quickImg");
+  if (!imgEl) return;
+  imgEl.src = quickImages[quickImageIndex] || "";
+}
+
+// NEW: render small thumbnails under main image
+function renderQuickThumbs() {
+  const wrap = document.getElementById("quickThumbs");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+
+  quickImages.forEach((url, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "qv-thumb" + (idx === quickImageIndex ? " active" : "");
+    btn.innerHTML = `<img src="${escapeAttr(url)}" alt="">`;
+    btn.onclick = () => {
+      quickImageIndex = idx;
+      renderQuickImage();
+      renderQuickThumbs();
+    };
+    wrap.appendChild(btn);
+  });
+}
+
 
 function closeQuickView() {
   const qv = document.getElementById("quickView");
