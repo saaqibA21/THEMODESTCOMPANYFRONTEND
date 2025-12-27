@@ -17,6 +17,7 @@
 <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 
 <!-- QUICK VIEW OVERLAY/MODAL -->
+<!-- QUICK VIEW OVERLAY/MODAL -->
 <div class="quick-view" id="quickView" aria-hidden="true" onclick="closeQuickView()">
   <div class="quick-view-content"
        role="dialog"
@@ -25,9 +26,14 @@
        onclick="event.stopPropagation()">
     <button class="qv-close" onclick="closeQuickView()" aria-label="Close">×</button>
     <div class="qv-body">
-      <div class="qv-image-wrap">
-        <img id="quickImg" src="" alt="Product image" onclick="toggleImageZoom()" />
+      <div>
+        <div class="qv-image-wrap">
+          <img id="quickImg" src="" alt="Product image" />
+        </div>
+        <!-- 👍 New thumbnails row -->
+        <div class="qv-thumbs" id="quickThumbs"></div>
       </div>
+
       <div class="qv-details">
         <h3 id="quickTitle"></h3>
         <p class="qv-price" id="quickPrice"></p>
@@ -50,6 +56,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
