@@ -622,6 +622,28 @@ function sortProducts(mode) {
   cards.forEach(c => grid.appendChild(c));
 }
 
+
+function handleQuickZoomMove(e) {
+  const img = document.getElementById("quickImg");
+  if (!img) return;
+
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+  // Make the zoom follow the cursor
+  img.style.transformOrigin = `${x}% ${y}%`;
+  img.style.transform = "scale(2.2)";
+}
+
+function handleQuickZoomLeave() {
+  const img = document.getElementById("quickImg");
+  if (!img) return;
+
+  img.style.transform = "scale(1)";
+  img.style.transformOrigin = "center center";
+}
+
 /* ---------------------------
   QUICK VIEW
 ---------------------------- */
@@ -686,6 +708,10 @@ function renderQuickImage() {
   const imgEl = document.getElementById("quickImg");
   if (!imgEl) return;
   imgEl.src = quickImages[quickImageIndex] || "";
+  // reset zoom state
+  imgEl.style.transform = "scale(1)";
+  imgEl.style.transformOrigin = "center center";
+}
 }
 
 // NEW: render small thumbnails under main image
@@ -818,6 +844,16 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeQuickView();
 });
 
+  // Quick View zoom handlers
+const quickImgWrap = document.getElementById("quickImgWrap");
+const quickImgEl = document.getElementById("quickImg");
+
+if (quickImgWrap && quickImgEl) {
+  quickImgWrap.addEventListener("mousemove", handleQuickZoomMove);
+  quickImgWrap.addEventListener("mouseleave", handleQuickZoomLeave);
+}
+
+  
 /* ---------------------------
   MOBILE SWIPE TO CLOSE MENU
 ---------------------------- */
