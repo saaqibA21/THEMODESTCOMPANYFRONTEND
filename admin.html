@@ -37,11 +37,14 @@
     .toggle.on{border-color:var(--gold);color:var(--gold)}
     .split{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 
-    #loginScreen{
+    /* LOGIN OVERLAY (renamed to match JS: adminLoginOverlay) */
+    #adminLoginOverlay{
       position:fixed;inset:0;background:#000;z-index:9999;
       display:flex;align-items:center;justify-content:center
     }
-    #dashboard{display:none}
+
+    /* DASHBOARD WRAP (renamed to match JS: adminWrap) */
+    #adminWrap{display:none}
 
     /* Edit Modal */
     #editModal{
@@ -72,24 +75,25 @@
   </div>
 </header>
 
-<!-- LOGIN SCREEN -->
-<div id="loginScreen">
+<!-- LOGIN SCREEN (IDs aligned with admin.js) -->
+<div id="adminLoginOverlay">
   <div style="border:1px solid var(--border);padding:32px;width:360px">
     <h2 style="font-family:'Playfair Display',serif;color:var(--gold)">Admin Login</h2>
-    <input id="loginKey" type="password" placeholder="Enter Admin Key" />
+    <input id="adminLoginKey" type="password" placeholder="Enter Admin Key" />
     <button class="btn" style="margin-top:14px;width:100%" onclick="adminLogin()">Enter</button>
     <div id="loginError" style="color:#ffb3b3;font-size:13px;margin-top:10px"></div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="admin-wrap" id="dashboard">
+<!-- DASHBOARD (IDs aligned with admin.js) -->
+<div class="admin-wrap" id="adminWrap">
 
   <!-- ANALYTICS -->
   <div class="panel">
     <div class="split">
       <h2 style="font-family:'Playfair Display',serif;color:var(--gold);margin:0">Sales Analytics</h2>
-      <select id="rangeSelect" onchange="loadAnalytics()">
+      <!-- id must be analyticsRange to match JS -->
+      <select id="analyticsRange" onchange="loadAnalytics()">
         <option value="today">Today</option>
         <option value="week">This Week</option>
         <option value="month">This Month</option>
@@ -102,6 +106,7 @@
       <div class="tag">Top Product: <b id="statTop">—</b></div>
     </div>
 
+    <!-- id must be revenueChartCanvas to match JS -->
     <canvas id="revenueChartCanvas" height="120"></canvas>
   </div>
 
@@ -139,7 +144,8 @@
 
     <div class="row">
       <button class="btn" onclick="addProduct()">Add Product</button>
-      <span class="tag" id="status">Ready</span>
+      <!-- id must be statusTag to match JS -->
+      <span class="tag" id="statusTag">Ready</span>
     </div>
   </div>
 
