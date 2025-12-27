@@ -977,3 +977,39 @@ img {
     font-size: 22px;
   }
 }
+
+/* Quick View multiple images */
+.qv-image-wrap {
+  max-width: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  background:#000;
+}
+
+.qv-thumbs {
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.qv-thumb {
+  border:1px solid var(--border);
+  background:transparent;
+  padding:0;
+  width:60px;
+  height:76px;
+  overflow:hidden;
+  cursor:pointer;
+}
+
+.qv-thumb img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.qv-thumb.active {
+  border-color:var(--gold);
+}
